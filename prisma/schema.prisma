@@ -1,0 +1,53 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Invitation {
+  id          Int       @id @default(autoincrement())
+  code        String    @unique @default(uuid())
+  respondedAt DateTime?
+
+  guests               Guest[]
+  activityParticipants ActivityParticipation[]
+  boatInfo             BoatInfo?
+}
+
+model Guest {
+  id            Int      @id @default(autoincrement())
+  invitationId  Int
+  name          String
+  partnerId     Int?     @unique
+  participating Boolean?
+
+  invitation Invitation @relation(fields: [invitationId], references: [id])
+  partner    Guest?     @relation("GuestPartner", fields: [partnerId], references: [id])
+  partnerOf  Guest?     @relation("GuestPartner")
+}
+
+model ActivityParticipation {
+  id           Int      @id @default(autoincrement())
+  invitationId Int
+  activity     Activity
+
+  invitation Invitation @relation(fields: [invitationId], references: [id])
+}
+
+model BoatInfo {
+  id             Int  @id @default(autoincrement())
+  invitationId   Int  @unique
+  availableSpots Int?
+  neededSpots    Int?
+
+  invitation Invitation @relation(fields: [invitationId], references: [id])
+}
+
+enum Activity {
+  DESCENTE_RHONE
+  BBQ_MIDI
+  BBQ_SOIR
+}
