@@ -4,7 +4,7 @@ import { PrismaClient } from "../src/generated/prisma/client"
 import { couples, singles, type CoupleEntry, type SingleEntry } from "./guests-data"
 
 const prisma = new PrismaClient({
-  adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL! }),
+  adapter: new PrismaPg({ connectionString: process.env.POSTGRES_PRISMA_URL! }),
 })
 
 async function seedCouple({ code, partners: [nameA, nameB] }: CoupleEntry) {

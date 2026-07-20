@@ -1,0 +1,3 @@
+{
+    "window.title": "${dirty}${activeEditorShort}${separator}dnd-engagement-party${separator}${profileName}${separator}${appName}"
+}
