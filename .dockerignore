@@ -1,0 +1,13 @@
+node_modules
+.next
+.git
+.direnv
+.envrc
+.vercel
+.vscode
+scripts/output
+docs
+*.md
+.env
+.env.*
+!.env.example
