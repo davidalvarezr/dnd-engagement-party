@@ -8,15 +8,29 @@ const prisma = new PrismaClient({
 })
 
 async function seedCouple({ code, partners: [nameA, nameB] }: CoupleEntry) {
-  const invitation = await prisma.invitation.create({ data: { code } })
+  const invitation = await prisma.invitation.upsert({
+    where: { code },
+    create: { code },
+    update: {},
+    include: { guests: true },
+  })
+  if (invitation.guests.length > 0) return
+
   const a = await prisma.guest.create({ data: { invitationId: invitation.id, name: nameA } })
   const b = await prisma.guest.create({ data: { invitationId: invitation.id, name: nameB, partnerId: a.id } })
   await prisma.guest.update({ where: { id: a.id }, data: { partnerId: b.id } })
 }
 
 async function seedSingle({ code, name }: SingleEntry) {
-  const { id: invitationId } = await prisma.invitation.create({ data: { code } })
-  await prisma.guest.create({ data: { invitationId, name } })
+  const invitation = await prisma.invitation.upsert({
+    where: { code },
+    create: { code },
+    update: {},
+    include: { guests: true },
+  })
+  if (invitation.guests.length > 0) return
+
+  await prisma.guest.create({ data: { invitationId: invitation.id, name } })
 }
 
 async function main() {
