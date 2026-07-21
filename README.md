@@ -20,6 +20,21 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Development
+
+- `pnpm test` — run the test suite (Vitest)
+- `pnpm format` — auto-format the codebase with Biome
+- `pnpm format:check` — check formatting without writing changes (used in CI)
+- `pnpm lint` — lint with Biome
+
+CI (`.github/workflows/release.yml`) runs formatting, linting, tests, and a production build before a new version is tagged and a Docker image is published — a push to `main` that fails any of these never reaches Docker Hub.
+
+To run the same formatting/lint checks locally before every commit, enable the checked-in pre-commit hook once:
+
+```bash
+git config core.hooksPath .githooks
+```
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

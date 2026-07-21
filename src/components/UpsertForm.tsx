@@ -18,7 +18,7 @@ export type SubmitPayload = {
     boatInfo?: { availableSpots?: number; neededSpots?: number }
 }
 
-function deriveAttendance(invitation: Invitation): string | null {
+export function deriveAttendance(invitation: Invitation): string | null {
     const [guestA, guestB] = invitation.guests
     if (guestA.participating === null) return null
     if (invitation.guests.length === 1)
@@ -29,7 +29,7 @@ function deriveAttendance(invitation: Invitation): string | null {
     return "none"
 }
 
-function deriveBoatChoice(
+export function deriveBoatChoice(
     invitation: Invitation,
 ): "has_boat" | "needs_spot" | null {
     if (!invitation.boatInfo) return null
