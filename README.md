@@ -64,6 +64,10 @@ cd dnd-engagement-party
 cp .env.prod.example .env
 # fill in real values in .env
 chmod 600 .env
+# real guest data never lives in git or the image - place these two
+# gitignored files here manually (scp from your dev machine)
+#   prisma/guests-data.ts
+#   prisma/fixups.ts
 docker compose up -d
 ```
 
