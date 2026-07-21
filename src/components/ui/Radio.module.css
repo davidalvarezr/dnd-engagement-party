@@ -1,0 +1,39 @@
+.label {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    font-family: var(--font-body);
+    font-size: 1.1rem;
+    color: var(--color-text);
+    cursor: pointer;
+}
+
+.input {
+    appearance: none;
+    flex-shrink: 0;
+    width: 1.6rem;
+    height: 1.6rem;
+    margin: 0;
+    border-radius: 50%;
+    background: var(--color-cream);
+    border: 2px solid transparent;
+    position: relative;
+    cursor: pointer;
+}
+
+.input:checked {
+    border-color: var(--color-accent);
+}
+
+.input:checked::after {
+    content: "";
+    position: absolute;
+    inset: 25%;
+    border-radius: 50%;
+    background: var(--color-accent);
+}
+
+.input:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 2px;
+}
