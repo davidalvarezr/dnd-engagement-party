@@ -20,6 +20,21 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Development
+
+- `pnpm test` — run the test suite (Vitest)
+- `pnpm format` — auto-format the codebase with Biome
+- `pnpm format:check` — check formatting without writing changes (used in CI)
+- `pnpm lint` — lint with Biome
+
+CI (`.github/workflows/release.yml`) runs formatting, linting, tests, and a production build before a new version is tagged and a Docker image is published — a push to `main` that fails any of these never reaches Docker Hub.
+
+To run the same formatting/lint checks locally before every commit, enable the checked-in pre-commit hook once:
+
+```bash
+git config core.hooksPath .githooks
+```
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
@@ -34,3 +49,28 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Deployment
+
+This project is deployed to a self-hosted NAS via Docker, with CI building and publishing images automatically.
+
+**CI flow**: every push to `main` triggers `.github/workflows/release.yml`, which computes the next semver tag from conventional commits, builds the Docker image, and pushes it to Docker Hub as `devdav2/dnd-engagement-party:vX.Y.Z` and `:latest`.
+
+**One-time NAS setup**:
+
+```bash
+git clone <repo-url>
+cd dnd-engagement-party
+cp .env.prod.example .env
+# fill in real values in .env
+chmod 600 .env
+# real guest data never lives in git or the image - place these two
+# gitignored files here manually (scp from your dev machine)
+#   prisma/guests-data.ts
+#   prisma/fixups.ts
+docker compose up -d
+```
+
+**Steady state**: nothing to do. A `watchtower` service polls Docker Hub every 5 minutes and automatically pulls + restarts the `web` container when a new `latest` image is published — no manual steps for ordinary releases.
+
+**When `docker-compose.yml` itself changes** (new services, structural changes): Watchtower only reacts to image digest changes, not compose file edits, so you still need to run `git pull && docker compose up -d` on the NAS once to pick up the change.
