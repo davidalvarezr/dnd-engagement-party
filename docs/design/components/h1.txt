@@ -1,0 +1,11 @@
+font-family: Suburban OT;
+font-weight: 700;
+font-style: Bold;
+font-size: 48px;
+leading-trim: NONE;
+line-height: 80%;
+letter-spacing: 0%;
+text-align: center;
+
+background: #390000;
+

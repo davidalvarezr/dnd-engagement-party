@@ -1,13 +1,19 @@
 "use client"
 
 import type { getInvitationByCode } from "@/lib/invitations"
+import typography from "@/styles/typography.module.css"
+import { InviteShell } from "./InviteShell"
+import styles from "./ReadMode.module.css"
+import { BoatDivider } from "./ui/BoatDivider"
+import { Button } from "./ui/Button"
+import { WavyDivider } from "./ui/WavyDivider"
 
 type Invitation = NonNullable<Awaited<ReturnType<typeof getInvitationByCode>>>
 
 const ACTIVITY_LABELS: Record<string, string> = {
-    DESCENTE_RHONE: "10:00 — Descente du Rhône",
-    BBQ_MIDI: "13:00 — BBQ midi",
-    BBQ_SOIR: "18:00 — BBQ soir",
+    DESCENTE_RHONE: "10h00 — Descente du Rhône",
+    BBQ_MIDI: "13h00 — BBQ midi",
+    BBQ_SOIR: "18h00 — BBQ soir",
 }
 
 type Props = {
@@ -20,48 +26,71 @@ export function ReadMode({ invitation, onEdit }: Props) {
     const notAttending = invitation.guests.filter((g) => !g.participating)
 
     return (
-        <div>
-            {attending.length > 0 && (
-                <p>✅ Attending: {attending.map((g) => g.name).join(" & ")}</p>
-            )}
-            {notAttending.length > 0 && (
-                <p>
-                    ❌ Not attending:{" "}
-                    {notAttending.map((g) => g.name).join(" & ")}
-                </p>
-            )}
+        <InviteShell>
+            <div className={styles.content}>
+                <BoatDivider align="center" />
 
-            {invitation.activityParticipants.length > 0 && (
-                <div>
-                    <p>Activities:</p>
-                    <ul>
-                        {invitation.activityParticipants.map((a) => (
-                            <li key={a.id}>
-                                {ACTIVITY_LABELS[a.activity] ?? a.activity}
-                            </li>
-                        ))}
-                    </ul>
+                <div className={styles.intro}>
+                    <h3 className={typography.h3}>merci !</h3>
+                    <p className={typography.p}>
+                        Voici ce qu’on a retenu de ta réponse :
+                    </p>
                 </div>
-            )}
 
-            {invitation.boatInfo?.availableSpots !== null &&
-                invitation.boatInfo?.availableSpots !== undefined && (
-                    <p>
-                        🚣 Boat available — {invitation.boatInfo.availableSpots}{" "}
-                        spot(s)
-                    </p>
-                )}
-            {invitation.boatInfo?.neededSpots !== null &&
-                invitation.boatInfo?.neededSpots !== undefined && (
-                    <p>
-                        🚣 Needs {invitation.boatInfo.neededSpots} spot(s) in a
-                        boat
-                    </p>
-                )}
+                <WavyDivider />
 
-            <button type="button" onClick={onEdit}>
-                Edit
-            </button>
-        </div>
+                <section className={styles.section}>
+                    {attending.length > 0 && (
+                        <p className={typography.p}>
+                            ✅ Viennent :{" "}
+                            {attending.map((g) => g.name).join(" & ")}
+                        </p>
+                    )}
+                    {notAttending.length > 0 && (
+                        <p className={typography.p}>
+                            ❌ Ne viennent pas :{" "}
+                            {notAttending.map((g) => g.name).join(" & ")}
+                        </p>
+                    )}
+
+                    {invitation.activityParticipants.length > 0 && (
+                        <div className={styles.section}>
+                            <p className={typography.p}>
+                                <strong>Activités :</strong>
+                            </p>
+                            <ul className={styles.activityList}>
+                                {invitation.activityParticipants.map((a) => (
+                                    <li key={a.id} className={typography.p}>
+                                        {ACTIVITY_LABELS[a.activity] ??
+                                            a.activity}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+
+                    {invitation.boatInfo?.availableSpots !== null &&
+                        invitation.boatInfo?.availableSpots !== undefined && (
+                            <p className={typography.p}>
+                                🚣 Bâteau disponible —{" "}
+                                {invitation.boatInfo.availableSpots} place(s)
+                            </p>
+                        )}
+                    {invitation.boatInfo?.neededSpots !== null &&
+                        invitation.boatInfo?.neededSpots !== undefined && (
+                            <p className={typography.p}>
+                                🚣 Besoin de {invitation.boatInfo.neededSpots}{" "}
+                                place(s) dans un bâteau
+                            </p>
+                        )}
+                </section>
+
+                <div className={styles.actions}>
+                    <Button type="button" onClick={onEdit}>
+                        modifier
+                    </Button>
+                </div>
+            </div>
+        </InviteShell>
     )
 }

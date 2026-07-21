@@ -1,0 +1,10 @@
+font-family: Futura 100;
+font-weight: 700;
+font-style: Regular;
+font-size: 16px;
+leading-trim: NONE;
+line-height: 100%;
+letter-spacing: 0%;
+text-align: right;
+
+background: #390000;
