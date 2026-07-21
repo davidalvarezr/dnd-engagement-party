@@ -27,7 +27,7 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 - `pnpm format:check` — check formatting without writing changes (used in CI)
 - `pnpm lint` — lint with Biome
 
-CI (`.github/workflows/release.yml`) runs formatting, linting, tests, and a production build before a new version is tagged and a Docker image is published — a push to `main` that fails any of these never reaches Docker Hub.
+CI (`.github/workflows/release.yml`) runs formatting, linting, tests, and a production build before a new version is tagged and a Docker image is published — a push to `main` that fails any of these never reaches the registry.
 
 To run the same formatting/lint checks locally before every commit, enable the checked-in pre-commit hook once:
 
@@ -54,7 +54,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 This project is deployed to a self-hosted NAS via Docker, with CI building and publishing images automatically.
 
-**CI flow**: every push to `main` triggers `.github/workflows/release.yml`, which computes the next semver tag from conventional commits, builds the Docker image, and pushes it to Docker Hub as `devdav2/dnd-engagement-party:vX.Y.Z` and `:latest`.
+**CI flow**: every push to `main` triggers `.github/workflows/release.yml`, which computes the next semver tag from conventional commits, builds the Docker image, and pushes it to the GitHub Container Registry (private, scoped to this repo) as `ghcr.io/davidalvarezr/dnd-engagement-party:vX.Y.Z` and `:latest`.
 
 **One-time NAS setup**:
 
@@ -68,9 +68,15 @@ chmod 600 .env
 # gitignored files here manually (scp from your dev machine)
 #   prisma/guests-data.ts
 #   prisma/fixups.ts
+
+# the image is private - authenticate the NAS's Docker daemon once so
+# both this pull and Watchtower's periodic pulls succeed. Use a GitHub
+# PAT (classic or fine-grained) scoped to read:packages on this repo.
+echo "$GITHUB_PAT" | docker login ghcr.io -u <your-github-username> --password-stdin
+
 docker compose up -d
 ```
 
-**Steady state**: nothing to do. A `watchtower` service polls Docker Hub every 5 minutes and automatically pulls + restarts the `web` container when a new `latest` image is published — no manual steps for ordinary releases.
+**Steady state**: nothing to do. A `watchtower` service polls the registry every 5 minutes and automatically pulls + restarts the `web` container when a new `latest` image is published — no manual steps for ordinary releases. Watchtower reuses the Docker daemon's stored `ghcr.io` credentials, so no extra config is needed there.
 
 **When `docker-compose.yml` itself changes** (new services, structural changes): Watchtower only reacts to image digest changes, not compose file edits, so you still need to run `git pull && docker compose up -d` on the NAS once to pick up the change.

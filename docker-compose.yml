@@ -15,7 +15,7 @@ services:
       retries: 10
 
   web:
-    image: devdav2/dnd-engagement-party:latest
+    image: ghcr.io/davidalvarezr/dnd-engagement-party:latest
     build:
       context: .
       dockerfile: Dockerfile
