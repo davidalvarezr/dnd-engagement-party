@@ -54,3 +54,4 @@ next-env.d.ts
 # real guest names + invitation codes, host-local only
 /prisma/guests-data.ts
 /docs/diagrams/guest/guest-list.csv
+/prisma/fixups.ts
