@@ -1,0 +1,99 @@
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+}
+
+.intro {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.illustrations {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.5rem;
+}
+
+.funPerson {
+    display: block;
+    width: 5rem;
+    height: auto;
+}
+
+.paragraphs,
+.paragraphsRight {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    text-align: right;
+}
+
+.section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.scheduleRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.leftParagraphs {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    text-align: left;
+}
+
+.lieuHeader {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+.fieldset {
+    border: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.legend {
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--color-text);
+    padding: 0;
+}
+
+.optionList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.submitRow {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding-top: 1rem;
+}
+
+.cancel {
+    appearance: none;
+    background: none;
+    border: none;
+    font-family: var(--font-body);
+    color: var(--color-text);
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0;
+}

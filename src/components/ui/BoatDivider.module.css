@@ -1,0 +1,17 @@
+.boat {
+    display: block;
+    width: 5.5rem;
+    height: auto;
+}
+
+.center {
+    margin: 0 auto;
+}
+
+.left {
+    margin-right: auto;
+}
+
+.right {
+    margin-left: auto;
+}

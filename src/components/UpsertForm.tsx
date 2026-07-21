@@ -1,7 +1,17 @@
 "use client"
 
+import Image from "next/image"
 import { useState } from "react"
 import type { getInvitationByCode } from "@/lib/invitations"
+import typography from "@/styles/typography.module.css"
+import { InviteShell } from "./InviteShell"
+import styles from "./UpsertForm.module.css"
+import { BoatDivider } from "./ui/BoatDivider"
+import { Button } from "./ui/Button"
+import { Checkbox } from "./ui/Checkbox"
+import { NumberInput } from "./ui/NumberInput"
+import { Radio } from "./ui/Radio"
+import { WavyDivider } from "./ui/WavyDivider"
 
 type Invitation = NonNullable<Awaited<ReturnType<typeof getInvitationByCode>>>
 type Activity = "DESCENTE_RHONE" | "BBQ_MIDI" | "BBQ_SOIR"
@@ -97,187 +107,309 @@ export function UpsertForm({ invitation, onSubmit, onCancel }: Props) {
     }
 
     return (
-        <form
-            onSubmit={(e) => {
-                e.preventDefault()
-                onSubmit(buildPayload())
-            }}
-        >
-            {/* Q1 — Attendance */}
-            <fieldset>
-                <legend>
-                    {isCouple
-                        ? "Who is coming to the event?"
-                        : "Are you coming to the event?"}
-                </legend>
+        <InviteShell>
+            <form
+                className={styles.form}
+                onSubmit={(e) => {
+                    e.preventDefault()
+                    onSubmit(buildPayload())
+                }}
+            >
+                <BoatDivider align="center" />
 
-                {isCouple ? (
-                    <>
-                        <label>
-                            <input
-                                type="radio"
-                                name="attendance"
-                                value="both"
-                                checked={attendance === "both"}
-                                onChange={(e) => setAttendance(e.target.value)}
-                            />{" "}
-                            Both of us
-                        </label>
-                        <label>
-                            <input
-                                type="radio"
-                                name="attendance"
-                                value="guestA"
-                                checked={attendance === "guestA"}
-                                onChange={(e) => setAttendance(e.target.value)}
-                            />{" "}
-                            {guestA.name}
-                        </label>
-                        <label>
-                            <input
-                                type="radio"
-                                name="attendance"
-                                value="guestB"
-                                checked={attendance === "guestB"}
-                                onChange={(e) => setAttendance(e.target.value)}
-                            />{" "}
-                            {guestB.name}
-                        </label>
-                        <label>
-                            <input
-                                type="radio"
-                                name="attendance"
-                                value="none"
-                                checked={attendance === "none"}
-                                onChange={(e) => setAttendance(e.target.value)}
-                            />{" "}
-                            None of us
-                        </label>
-                    </>
-                ) : (
-                    <>
-                        <label>
-                            <input
-                                type="radio"
-                                name="attendance"
-                                value="yes"
-                                checked={attendance === "yes"}
-                                onChange={(e) => setAttendance(e.target.value)}
-                            />{" "}
-                            Yes
-                        </label>
-                        <label>
-                            <input
-                                type="radio"
-                                name="attendance"
-                                value="no"
-                                checked={attendance === "no"}
-                                onChange={(e) => setAttendance(e.target.value)}
-                            />{" "}
-                            No
-                        </label>
-                    </>
-                )}
-            </fieldset>
+                <div className={styles.intro}>
+                    <div className={styles.illustrations}>
+                        <Image
+                            src="/images/invite/fun-person-1.png"
+                            alt=""
+                            width={190}
+                            height={162}
+                            className={styles.funPerson}
+                            aria-hidden
+                        />
+                        <Image
+                            src="/images/invite/fun-person-2.png"
+                            alt=""
+                            width={137}
+                            height={155}
+                            className={styles.funPerson}
+                            aria-hidden
+                        />
+                    </div>
+                    <div className={styles.paragraphs}>
+                        <p className={typography.p}>
+                            <strong>Okay, let’s GO</strong> fêter nos
+                            fiançialles !
+                        </p>
+                        <p className={typography.p}>
+                            <strong>
+                                Cela nous ferait plaisir de vous avoir parmis
+                                nous pour célébrer ensemble.
+                            </strong>
+                        </p>
+                        <p className={typography.p}>
+                            Les infos ainsi que la questionnaire pour
+                            l’organisation se trouvent ci-dessous,{" "}
+                            <strong>veuillez compléter au plus vite</strong>{" "}
+                            pour s’assurer d’avoir une place dans un bâteau :)
+                        </p>
+                    </div>
+                </div>
 
-            {/* Q2 — Activities */}
-            {someoneAttending && (
-                <fieldset>
-                    <legend>I&apos;m participating to:</legend>
-                    <label>
-                        <input
-                            type="checkbox"
-                            checked={activities.includes("DESCENTE_RHONE")}
-                            onChange={() => toggleActivity("DESCENTE_RHONE")}
-                        />{" "}
-                        10:00 — Descente du Rhône
-                    </label>
-                    <label>
-                        <input
-                            type="checkbox"
-                            checked={activities.includes("BBQ_MIDI")}
-                            onChange={() => toggleActivity("BBQ_MIDI")}
-                        />{" "}
-                        13:00 — BBQ midi
-                    </label>
-                    <label>
-                        <input
-                            type="checkbox"
-                            checked={activities.includes("BBQ_SOIR")}
-                            onChange={() => toggleActivity("BBQ_SOIR")}
-                        />{" "}
-                        18:00 — BBQ soir
-                    </label>
-                </fieldset>
-            )}
+                <WavyDivider />
 
-            {/* Q3 — Boat */}
-            {someoneAttending && descente && (
-                <fieldset>
-                    <legend>Inflatable boat</legend>
-                    <label>
-                        <input
-                            type="radio"
-                            name="boat"
-                            value="has_boat"
-                            checked={boatChoice === "has_boat"}
-                            onChange={() => setBoatChoice("has_boat")}
-                        />{" "}
-                        I have a/multiple inflatable boat(s)
-                    </label>
-                    <label>
-                        <input
-                            type="radio"
-                            name="boat"
-                            value="needs_spot"
-                            checked={boatChoice === "needs_spot"}
-                            onChange={() => setBoatChoice("needs_spot")}
-                        />{" "}
-                        I need a/multiple spot(s) in an inflatable boat
-                    </label>
-                </fieldset>
-            )}
+                <section className={styles.section}>
+                    <h3 className={typography.h3}>infos</h3>
+                    <h4 className={typography.h4}>horaires</h4>
 
-            {/* Q4 — Available spots */}
-            {someoneAttending && descente && boatChoice === "has_boat" && (
-                <fieldset>
-                    <legend>
-                        How many available spots do you have in your boat(s)?
-                    </legend>
-                    <input
-                        type="number"
-                        min={0}
-                        max={12}
-                        value={availableSpots}
-                        onChange={(e) =>
-                            setAvailableSpots(Number(e.target.value))
-                        }
-                    />
-                </fieldset>
-            )}
+                    <div className={styles.scheduleRow}>
+                        <div className={styles.leftParagraphs}>
+                            <p className={typography.p}>
+                                Descente du Rhône : <strong>10h</strong>
+                            </p>
+                            <p className={typography.p}>
+                                BBQ midi : à partir de <strong>13h</strong>
+                            </p>
+                            <p className={typography.p}>
+                                BBQ soir : à partir de <strong>18h</strong>
+                            </p>
+                        </div>
+                        <BoatDivider align="right" />
+                    </div>
 
-            {/* Q5 — Needed spots */}
-            {someoneAttending && descente && boatChoice === "needs_spot" && (
-                <fieldset>
-                    <legend>How many spots do you need?</legend>
-                    <input
-                        type="number"
-                        min={0}
-                        max={4}
-                        value={neededSpots}
-                        onChange={(e) => setNeededSpots(Number(e.target.value))}
-                    />
-                </fieldset>
-            )}
+                    <p className={typography.p}>
+                        Si vous nous rejoignez pour le BBQ, on risque d’avoir un
+                        peu de retard si le courant est faible alors pas de
+                        stress pour être à l’heure :)
+                    </p>
+                </section>
 
-            <button type="submit" disabled={attendance === null}>
-                Submit
-            </button>
-            {onCancel && (
-                <button type="button" onClick={onCancel}>
-                    Cancel
-                </button>
-            )}
-        </form>
+                <WavyDivider flip />
+
+                <section className={styles.section}>
+                    <div className={styles.lieuHeader}>
+                        <BoatDivider align="left" />
+                        <h4 className={typography.h4}>lieu</h4>
+                    </div>
+
+                    <div className={styles.paragraphsRight}>
+                        <p className={typography.p}>
+                            Début de la Descente du Rhône :
+                        </p>
+                        <p className={typography.p}>
+                            <strong>46°12'12.8"N 6°07'58.1"E</strong>
+                        </p>
+                        <p className={typography.p}>
+                            Arrêt <strong>Paladium</strong>, Genève
+                        </p>
+                        <p className={typography.p}>
+                            BBQ :<br />
+                            <strong>
+                                Le Deck, Chem. du Moulin des Frères 43
+                            </strong>
+                            , 1214 Vernier
+                        </p>
+                        <p className={typography.p}>
+                            Arrêt <strong>Vernier, De Sauvage</strong>, Genève
+                        </p>
+                    </div>
+                </section>
+
+                <WavyDivider />
+
+                <section className={styles.section}>
+                    <h3 className={typography.h3}>questionnaire</h3>
+
+                    {/* Q1 — Attendance */}
+                    <fieldset className={styles.fieldset}>
+                        <legend className={styles.legend}>
+                            {isCouple ? "Qui vient ?" : "Tu viens ?"}
+                        </legend>
+                        <div className={styles.optionList}>
+                            {isCouple ? (
+                                <>
+                                    <Radio
+                                        name="attendance"
+                                        value="both"
+                                        checked={attendance === "both"}
+                                        onChange={(e) =>
+                                            setAttendance(e.target.value)
+                                        }
+                                        label="Les deux"
+                                    />
+                                    <Radio
+                                        name="attendance"
+                                        value="guestA"
+                                        checked={attendance === "guestA"}
+                                        onChange={(e) =>
+                                            setAttendance(e.target.value)
+                                        }
+                                        label={guestA.name}
+                                    />
+                                    <Radio
+                                        name="attendance"
+                                        value="guestB"
+                                        checked={attendance === "guestB"}
+                                        onChange={(e) =>
+                                            setAttendance(e.target.value)
+                                        }
+                                        label={guestB.name}
+                                    />
+                                    <Radio
+                                        name="attendance"
+                                        value="none"
+                                        checked={attendance === "none"}
+                                        onChange={(e) =>
+                                            setAttendance(e.target.value)
+                                        }
+                                        label="Personne"
+                                    />
+                                </>
+                            ) : (
+                                <>
+                                    <Radio
+                                        name="attendance"
+                                        value="yes"
+                                        checked={attendance === "yes"}
+                                        onChange={(e) =>
+                                            setAttendance(e.target.value)
+                                        }
+                                        label="Oui"
+                                    />
+                                    <Radio
+                                        name="attendance"
+                                        value="no"
+                                        checked={attendance === "no"}
+                                        onChange={(e) =>
+                                            setAttendance(e.target.value)
+                                        }
+                                        label="Non"
+                                    />
+                                </>
+                            )}
+                        </div>
+                    </fieldset>
+
+                    {/* Q2 — Activities */}
+                    {someoneAttending && (
+                        <fieldset className={styles.fieldset}>
+                            <legend className={styles.legend}>
+                                Je participe à :
+                            </legend>
+                            <div className={styles.optionList}>
+                                <Checkbox
+                                    checked={activities.includes(
+                                        "DESCENTE_RHONE",
+                                    )}
+                                    onChange={() =>
+                                        toggleActivity("DESCENTE_RHONE")
+                                    }
+                                    label={
+                                        <>
+                                            <strong>10h00</strong> Descente du
+                                            Rhône
+                                        </>
+                                    }
+                                />
+                                <Checkbox
+                                    checked={activities.includes("BBQ_MIDI")}
+                                    onChange={() => toggleActivity("BBQ_MIDI")}
+                                    label={
+                                        <>
+                                            <strong>13h00</strong> BBQ midi
+                                        </>
+                                    }
+                                />
+                                <Checkbox
+                                    checked={activities.includes("BBQ_SOIR")}
+                                    onChange={() => toggleActivity("BBQ_SOIR")}
+                                    label={
+                                        <>
+                                            <strong>18h00</strong> BBQ soir
+                                        </>
+                                    }
+                                />
+                            </div>
+                        </fieldset>
+                    )}
+
+                    {/* Q3 — Boat */}
+                    {someoneAttending && descente && (
+                        <fieldset className={styles.fieldset}>
+                            <legend className={styles.legend}>
+                                As-tu un bâteau ?
+                            </legend>
+                            <div className={styles.optionList}>
+                                <Radio
+                                    name="boat"
+                                    value="has_boat"
+                                    checked={boatChoice === "has_boat"}
+                                    onChange={() => setBoatChoice("has_boat")}
+                                    label="J’ai un/des bâteau(x) gonflable(s)"
+                                />
+                                <Radio
+                                    name="boat"
+                                    value="needs_spot"
+                                    checked={boatChoice === "needs_spot"}
+                                    onChange={() => setBoatChoice("needs_spot")}
+                                    label="J’ai besoin d’une/plusieurs place(s) dans un bâteau gonflable"
+                                />
+                            </div>
+                        </fieldset>
+                    )}
+
+                    {/* Q4 — Available spots */}
+                    {someoneAttending &&
+                        descente &&
+                        boatChoice === "has_boat" && (
+                            <fieldset className={styles.fieldset}>
+                                <legend className={styles.legend}>
+                                    Combien de places sont dispo dans ton bâteau
+                                    ?
+                                </legend>
+                                <NumberInput
+                                    value={availableSpots}
+                                    onChange={setAvailableSpots}
+                                    min={0}
+                                    max={12}
+                                />
+                            </fieldset>
+                        )}
+
+                    {/* Q5 — Needed spots */}
+                    {someoneAttending &&
+                        descente &&
+                        boatChoice === "needs_spot" && (
+                            <fieldset className={styles.fieldset}>
+                                <legend className={styles.legend}>
+                                    Combien de places as-tu besoin dans un
+                                    bâteau ?
+                                </legend>
+                                <NumberInput
+                                    value={neededSpots}
+                                    onChange={setNeededSpots}
+                                    min={0}
+                                    max={4}
+                                />
+                            </fieldset>
+                        )}
+                </section>
+
+                <div className={styles.submitRow}>
+                    <Button type="submit" disabled={attendance === null}>
+                        envoyer
+                    </Button>
+                    {onCancel && (
+                        <button
+                            type="button"
+                            className={styles.cancel}
+                            onClick={onCancel}
+                        >
+                            annuler
+                        </button>
+                    )}
+                </div>
+            </form>
+        </InviteShell>
     )
 }
