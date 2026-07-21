@@ -16,6 +16,7 @@ services:
 
   web:
     image: ghcr.io/davidalvarezr/dnd-engagement-party:latest
+    container_name: web
     build:
       context: .
       dockerfile: Dockerfile
