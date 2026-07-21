@@ -15,6 +15,7 @@ services:
       retries: 10
 
   web:
+    image: ghcr.io/davidalvarezr/dnd-engagement-party:latest
     build:
       context: .
       dockerfile: Dockerfile
@@ -28,6 +29,11 @@ services:
       NODE_ENV: production
     ports:
       - "3000:3000"
+    # Real guest data never lives in the image or git history - it's
+    # mounted straight from this host's gitignored working tree.
+    volumes:
+      - ./prisma/guests-data.ts:/app/prisma/guests-data.ts:ro
+      - ./prisma/fixups.ts:/app/prisma/fixups.ts:ro
 
   db-backup:
     image: prodrigestivill/postgres-backup-local:17-alpine
@@ -46,6 +52,15 @@ services:
       BACKUP_KEEP_DAYS: 7
       BACKUP_KEEP_WEEKS: 4
       BACKUP_KEEP_MONTHS: 6
+
+  watchtower:
+    image: containrrr/watchtower
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      WATCHTOWER_CLEANUP: "true"
+    command: --interval 300 web
 
 volumes:
   postgres_data:
