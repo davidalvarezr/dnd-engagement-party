@@ -50,3 +50,7 @@ next-env.d.ts
 
 # postgres backups (contain guest PII, host-local only)
 /backups
+
+# real guest names + invitation codes, host-local only
+/prisma/guests-data.ts
+/docs/diagrams/guest/guest-list.csv

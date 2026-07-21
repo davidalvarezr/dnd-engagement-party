@@ -1,12 +1,8 @@
 import "dotenv/config"
 import { PrismaPg } from "@prisma/adapter-pg"
 import { PrismaClient } from "../src/generated/prisma/client"
-import {
-    type CoupleEntry,
-    couples,
-    type SingleEntry,
-    singles,
-} from "./guests-data"
+import { couples, singles } from "./guests-data"
+import type { CoupleEntry, SingleEntry } from "./guests-data.types"
 
 const prisma = new PrismaClient({
     adapter: new PrismaPg({
