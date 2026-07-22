@@ -120,7 +120,7 @@ export function UpsertForm({ invitation, onSubmit, onCancel }: Props) {
                 <div className={styles.intro}>
                     <div className={styles.illustrations}>
                         <Image
-                            src="/images/invite/fun-person-1.png"
+                            src="/images/invite/fun-person-1.svg"
                             alt=""
                             width={190}
                             height={162}
@@ -128,7 +128,7 @@ export function UpsertForm({ invitation, onSubmit, onCancel }: Props) {
                             aria-hidden
                         />
                         <Image
-                            src="/images/invite/fun-person-2.png"
+                            src="/images/invite/fun-person-2.svg"
                             alt=""
                             width={137}
                             height={155}
