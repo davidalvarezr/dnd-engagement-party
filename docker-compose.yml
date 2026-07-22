@@ -27,6 +27,7 @@ services:
     environment:
       POSTGRES_PRISMA_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}@db:5432/${POSTGRES_DB:-dnd_engagement_party}
       HOST_URL: ${HOST_URL:?HOST_URL is required}
+      API_KEY: ${API_KEY:?API_KEY is required}
       NODE_ENV: production
     ports:
       - "3000:3000"

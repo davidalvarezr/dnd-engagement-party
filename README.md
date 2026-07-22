@@ -35,6 +35,31 @@ To run the same formatting/lint checks locally before every commit, enable the c
 git config core.hooksPath .githooks
 ```
 
+## Admin app
+
+`admin/` is a small, separate Go + HTMX app for managing the guest list day to day (view invitees, add/delete people, pair couples, see RSVP stats). It runs locally only — never deployed — and talks to this app's `/api/admin/*` endpoints over HTTP, authenticated with a shared `API_KEY` (`X-Api-Key` header). Set `API_KEY` in this app's `.env` for the endpoints to work.
+
+To run it:
+
+```bash
+cd admin
+cp .env.example .env
+# fill in API_KEY (must match this app's API_KEY) and TARGET_URL
+# (http://localhost:3000 for local dev, or your live URL)
+go run .
+```
+
+Then open `http://localhost:4100` (or whatever `PORT` you set).
+
+Dev commands (run from `admin/`):
+
+- `go test ./...` — run tests
+- `go vet ./...` — static analysis
+- `gofmt -l .` — check formatting (`gofmt -w .` to fix)
+- `go build ./...` — build
+
+The same pre-commit hook above also runs `gofmt`/`go vet` on `admin/` when files there are staged, and `.github/workflows/ci-admin.yml` runs the same checks in CI on PRs that touch `admin/`.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
