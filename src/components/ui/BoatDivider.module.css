@@ -2,16 +2,96 @@
     display: block;
     width: 5.5rem;
     height: auto;
+    transform-origin: 50% 70%;
 }
 
 .center {
     margin: 0 auto;
+    animation: rockA 4.6s ease-in-out infinite;
+    animation-delay: -1.2s;
 }
 
 .left {
     margin-right: auto;
+    animation: rockB 5.3s ease-in-out infinite;
+    animation-delay: -0.4s;
 }
 
 .right {
     margin-left: auto;
+    animation: rockC 4.1s ease-in-out infinite;
+    animation-delay: -2.7s;
+}
+
+/* Three slightly different rocking patterns/timings so boats on the same
+   page don't sway in lockstep, like they're each riding their own wave. */
+@keyframes rockA {
+    0% {
+        transform: rotate(0deg) translateY(0);
+    }
+    18% {
+        transform: rotate(-3deg) translateY(-1px);
+    }
+    42% {
+        transform: rotate(2deg) translateY(1px);
+    }
+    67% {
+        transform: rotate(-1.5deg) translateY(-0.5px);
+    }
+    86% {
+        transform: rotate(2.5deg) translateY(0.5px);
+    }
+    100% {
+        transform: rotate(0deg) translateY(0);
+    }
+}
+
+@keyframes rockB {
+    0% {
+        transform: rotate(0deg) translateY(0);
+    }
+    22% {
+        transform: rotate(2.5deg) translateY(1px);
+    }
+    48% {
+        transform: rotate(-3deg) translateY(-1px);
+    }
+    71% {
+        transform: rotate(1deg) translateY(0.5px);
+    }
+    90% {
+        transform: rotate(-2deg) translateY(-0.5px);
+    }
+    100% {
+        transform: rotate(0deg) translateY(0);
+    }
+}
+
+@keyframes rockC {
+    0% {
+        transform: rotate(0deg) translateY(0);
+    }
+    12% {
+        transform: rotate(-2deg) translateY(-0.5px);
+    }
+    35% {
+        transform: rotate(3deg) translateY(1px);
+    }
+    58% {
+        transform: rotate(-2.5deg) translateY(-1px);
+    }
+    82% {
+        transform: rotate(1.5deg) translateY(0.5px);
+    }
+    100% {
+        transform: rotate(0deg) translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .center,
+    .left,
+    .right {
+        animation: none;
+    }
 }

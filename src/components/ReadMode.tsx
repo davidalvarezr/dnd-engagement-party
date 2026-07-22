@@ -11,9 +11,8 @@ import { WavyDivider } from "./ui/WavyDivider"
 type Invitation = NonNullable<Awaited<ReturnType<typeof getInvitationByCode>>>
 
 const ACTIVITY_LABELS: Record<string, string> = {
-    DESCENTE_RHONE: "10h00 — Descente du Rhône",
-    BBQ_MIDI: "13h00 — BBQ midi",
-    BBQ_SOIR: "18h00 — BBQ soir",
+    DESCENTE_RHONE: "11h00 — Descente du Rhône",
+    BBQ_MIDI: "14h30 — BBQ",
 }
 
 type Props = {

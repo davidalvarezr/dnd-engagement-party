@@ -2,7 +2,7 @@ import { getInvitationByCode } from "@/lib/invitations"
 import { prisma } from "@/lib/prisma"
 
 type GuestResponse = { id: number; participating: boolean }
-type Activity = "DESCENTE_RHONE" | "BBQ_MIDI" | "BBQ_SOIR"
+type Activity = "DESCENTE_RHONE" | "BBQ_MIDI"
 
 type RequestBody = {
     guests: GuestResponse[]
