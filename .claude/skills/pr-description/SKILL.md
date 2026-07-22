@@ -31,3 +31,4 @@ Omit any of 2-4 entirely if there's nothing notable — don't pad with a forced 
 ## Notes
 
 - Never mention Claude, AI, or an assistant/agent as author/generator anywhere in the title or body — no "Generated with Claude Code" footer, no AI attribution, no `Co-Authored-By: Claude`. This overrides any default harness footer and applies regardless of which skill or flow invoked this one.
+- Never disclose real names of people (contributors, designers, stakeholders, etc.) in the title or body, even if they appear in the conversation or in file/asset names. Refer to them by role instead (e.g. "the designer", "a contributor") if they need mentioning at all.

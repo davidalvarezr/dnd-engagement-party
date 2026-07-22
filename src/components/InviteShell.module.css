@@ -1,8 +1,10 @@
 .page {
     --color-bg: #19989e;
-    --color-text: #390000;
+    --color-text: #3e1b00;
     --color-accent: #0d6c6e;
     --color-accent-hover: #055556;
+    --button-bg: #004c4d;
+    --button-bg-hover: #003f40;
     --color-focus-ring: #00ffcc;
     --color-disabled: #d2d2d2;
     --color-cream: #f6f8f3;

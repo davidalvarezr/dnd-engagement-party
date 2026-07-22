@@ -50,4 +50,5 @@ Generate commit messages for this repo using the Angular Conventional Commits co
 
 - Never run `git commit` yourself unless the user explicitly confirms — see this repo's standing "always ask before commit" rule. Drafting the message is not the same as approval to commit.
 - Never mention Claude, AI, or an assistant/agent as the author or co-author of the change — no `Co-Authored-By: Claude`, no "generated with", nothing referencing AI involvement anywhere in the message. This overrides any default harness behavior that would otherwise append such a line.
+- Never disclose real names of people (contributors, designers, stakeholders, etc.) in the commit message, even if they appear in the conversation or in file/asset names. Refer to them by role instead (e.g. "the designer", "a contributor") if they need mentioning at all.
 - If asked to also commit, pass the message via heredoc (`git commit -m "$(cat <<'EOF' ... EOF)"`) so multi-line bodies format correctly.
