@@ -76,3 +76,16 @@ screen shares the same look:
 - Static "infos" copy (horaires/lieu) uses the real activity times already in the app (10h/13h/18h)
   rather than the mock's placeholder times (11h/14h30), to avoid contradicting the questionnaire
   checkboxes below it.
+
+## Fonts update (2026-07-22)
+
+Danielle purchased "Suburban OT" and "Futura 100" via Adobe Fonts. Swapped the Google Fonts
+stand-ins for the real licensed families, loaded from the Adobe Fonts (Typekit) kit:
+
+- `src/app/layout.tsx`: dropped the `Caveat`/`Jost` `next/font/google` imports, added
+  `<link rel="stylesheet" href="https://use.typekit.net/gav5rgl.css">` to `<head>`.
+- `src/app/globals.css`: `--font-display` now resolves to `"suburban"`, `--font-body` to
+  `"futura-100"` — the kit ships both families in weights 400 and 700, matching every existing
+  usage of those variables. Also fixed the `body` rule's stale `Arial, Helvetica, sans-serif`
+  fallback to use `var(--font-body)` instead, since it was never actually wired to the
+  display/body font variables.
