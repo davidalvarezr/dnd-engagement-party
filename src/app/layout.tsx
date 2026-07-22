@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { Caveat, Geist, Geist_Mono, Jost } from "next/font/google"
+import { Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
 
 const geistSans = Geist({
@@ -10,18 +10,6 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
     variable: "--font-geist-mono",
     subsets: ["latin"],
-})
-
-const caveat = Caveat({
-    variable: "--font-display",
-    subsets: ["latin"],
-    weight: ["400", "700"],
-})
-
-const jost = Jost({
-    variable: "--font-body",
-    subsets: ["latin"],
-    weight: ["400", "700"],
 })
 
 export const metadata: Metadata = {
@@ -37,8 +25,14 @@ export default function RootLayout({
     return (
         <html
             lang="en"
-            className={`${geistSans.variable} ${geistMono.variable} ${caveat.variable} ${jost.variable}`}
+            className={`${geistSans.variable} ${geistMono.variable}`}
         >
+            <head>
+                <link
+                    rel="stylesheet"
+                    href="https://use.typekit.net/gav5rgl.css"
+                />
+            </head>
             <body>{children}</body>
         </html>
     )
