@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"sort"
+	"strings"
 	"time"
 
 	"admin/internal/client"
@@ -11,7 +12,6 @@ import (
 var activityLabels = map[string]string{
 	"DESCENTE_RHONE": "Rhône descent",
 	"BBQ_MIDI":       "BBQ (lunch)",
-	"BBQ_SOIR":       "BBQ (dinner)",
 }
 
 func activityLabel(activity string) string {
@@ -77,9 +77,15 @@ type InvitationDetailView struct {
 	Guests         []GuestDetailView
 	Activities     []string
 	BoatLabel      string
+	InviteURL      string
 }
 
-func NewInvitationDetailView(inv client.Invitation) InvitationDetailView {
+// inviteURL builds the guest-facing invite link for an invitation code.
+func inviteURL(baseURL, code string) string {
+	return strings.TrimRight(baseURL, "/") + "/invite/" + code
+}
+
+func NewInvitationDetailView(inv client.Invitation, baseURL string) InvitationDetailView {
 	respondedLabel := "Hasn't responded yet"
 	if inv.RespondedAt != nil {
 		if t, err := time.Parse(time.RFC3339, *inv.RespondedAt); err == nil {
@@ -121,6 +127,7 @@ func NewInvitationDetailView(inv client.Invitation) InvitationDetailView {
 		Guests:         guests,
 		Activities:     activities,
 		BoatLabel:      boatLabel,
+		InviteURL:      inviteURL(baseURL, inv.Code),
 	}
 }
 
@@ -153,7 +160,7 @@ type ActivityRow struct {
 	Count int
 }
 
-var activityOrder = []string{"DESCENTE_RHONE", "BBQ_MIDI", "BBQ_SOIR"}
+var activityOrder = []string{"DESCENTE_RHONE", "BBQ_MIDI"}
 
 // LinkPreviewView is the "link two people" preview/conflict-picker payload.
 type LinkPreviewView struct {
@@ -183,15 +190,15 @@ func nameForGuest(inv client.Invitation, guestID int) string {
 	return ""
 }
 
-func NewLinkPreviewView(guestIDA, guestIDB int, invA, invB client.Invitation) LinkPreviewView {
+func NewLinkPreviewView(guestIDA, guestIDB int, invA, invB client.Invitation, baseURL string) LinkPreviewView {
 	return LinkPreviewView{
 		GuestIDA:    guestIDA,
 		GuestIDB:    guestIDB,
 		NameA:       nameForGuest(invA, guestIDA),
 		NameB:       nameForGuest(invB, guestIDB),
 		Conflict:    invA.Responded() && invB.Responded(),
-		InvitationA: NewInvitationDetailView(invA),
-		InvitationB: NewInvitationDetailView(invB),
+		InvitationA: NewInvitationDetailView(invA, baseURL),
+		InvitationB: NewInvitationDetailView(invB, baseURL),
 	}
 }
 

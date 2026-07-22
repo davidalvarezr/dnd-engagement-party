@@ -17,8 +17,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const invitation = await getInvitationByCode(code)
     if (!invitation) return {}
 
+    const names = invitation.guests.map((g) => g.name).join(" & ")
+    const title = `${names} — D&D Engagement Party`
+    const description =
+        "⚠️ Don't share this link, it's your personal invitation ⚠️ — You are invited to our engagement party!"
+
     return {
-        title: "D&D Engagement Party",
+        title,
+        description,
+        openGraph: { title, description },
+        twitter: { card: "summary", title, description },
         manifest: `/invite/${code}/manifest.webmanifest`,
         appleWebApp: {
             capable: true,

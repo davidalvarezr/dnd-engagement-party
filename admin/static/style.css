@@ -311,6 +311,12 @@ section > h2 {
     gap: var(--space-4);
 }
 
+.detail-link a {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    word-break: break-all;
+}
+
 .detail-activities {
     display: flex;
     flex-wrap: wrap;
