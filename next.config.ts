@@ -7,7 +7,8 @@ const nextConfig: NextConfig = {
         // Our /public/images SVGs are self-authored static assets (no user
         // uploads), so it's safe to let next/image serve them.
         dangerouslyAllowSVG: true,
-        contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+        contentSecurityPolicy:
+            "default-src 'self'; script-src 'none'; sandbox;",
     },
     typescript: {
         // prisma/ and scripts/ hold standalone tsx-run scripts, not app
