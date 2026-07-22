@@ -194,23 +194,71 @@ export function UpsertForm({ invitation, onSubmit, onCancel }: Props) {
                             Début de la Descente du Rhône :
                         </p>
                         <p className={typography.p}>
-                            <strong>46°12'12.8"N 6°07'58.1"E</strong>
+                            <strong>
+                                <a
+                                    href="https://maps.app.goo.gl/QZDumV7cN2mvUdLX9"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={styles.link}
+                                >
+                                    46°12'12.8"N 6°07'58.1"E
+                                </a>
+                            </strong>
                         </p>
                         <p className={typography.p}>
-                            Arrêt <strong>Paladium</strong>, Genève
+                            Arrêt{" "}
+                            <strong>
+                                <a
+                                    href="https://maps.app.goo.gl/36EVfKpL1bjwogUt5"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={styles.link}
+                                >
+                                    Paladium
+                                </a>
+                            </strong>
+                            , Genève
                         </p>
                         <p className={typography.p}>
                             BBQ :<br />
                             <strong>
-                                Le Deck, Chem. du Moulin des Frères 43
+                                <a
+                                    href="https://maps.app.goo.gl/PqiaJnRtwaJ9UTdS8"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={styles.link}
+                                >
+                                    Le Deck, Chem. du Moulin des Frères 43
+                                </a>
                             </strong>
                             , 1214 Vernier
                         </p>
                         <p className={typography.p}>
-                            Arrêt <strong>Vernier, De Sauvage</strong>, Genève
+                            Arrêt{" "}
+                            <strong>
+                                <a
+                                    href="https://maps.app.goo.gl/Re5MYfZVxKHkLmEY7"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={styles.link}
+                                >
+                                    Vernier, De Sauvage
+                                </a>
+                            </strong>
+                            , Genève
                         </p>
                         <p className={typography.p}>
-                            Ou l’arrêt <strong>Vernier, Barde</strong>
+                            Ou l’arrêt{" "}
+                            <strong>
+                                <a
+                                    href="https://maps.app.goo.gl/qVZdimWisDPjBxry8"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={styles.link}
+                                >
+                                    Vernier, Barde
+                                </a>
+                            </strong>
                         </p>
                     </div>
                 </section>
