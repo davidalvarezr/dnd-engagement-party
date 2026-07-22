@@ -103,6 +103,11 @@ chmod 600 .env
 echo "$GITHUB_PAT" | docker login ghcr.io -u <your-github-username> --password-stdin
 
 docker compose up -d
+
+# seed the initial guest list from prisma/guests-data.ts (one-time - the
+# admin app is the source of truth after this, so this does not run
+# automatically on restarts/deploys)
+docker compose exec web node_modules/.bin/tsx prisma/seed.ts
 ```
 
 **Steady state**: nothing to do. A `watchtower` service polls the registry every 5 minutes and automatically pulls + restarts the `web` container when a new `latest` image is published — no manual steps for ordinary releases. Watchtower reuses the Docker daemon's stored `ghcr.io` credentials, so no extra config is needed there.
