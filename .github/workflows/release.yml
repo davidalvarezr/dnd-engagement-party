@@ -72,6 +72,22 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          # gh pr merge --auto right after gh pr create can race GitHub's async
+          # mergeability computation and fail with "Pull request is in unstable
+          # status (enablePullRequestAutoMerge)", so retry with backoff.
+          enable_automerge() {
+            local pr_ref="$1"
+            for attempt in 1 2 3 4 5; do
+              if gh pr merge "$pr_ref" --auto --merge; then
+                return 0
+              fi
+              echo "enabling auto-merge failed (attempt $attempt/5), retrying in 10s..."
+              sleep 10
+            done
+            echo "::error::failed to enable auto-merge on $pr_ref after retries"
+            return 1
+          }
+
           git fetch origin main develop
 
           if [ "$(git rev-list origin/develop..origin/main --count)" -eq 0 ]; then
@@ -83,7 +99,7 @@ jobs:
 
           if [ -n "$existing_pr" ]; then
             echo "sync PR #$existing_pr already open, ensuring auto-merge is enabled"
-            gh pr merge "$existing_pr" --auto --merge
+            enable_automerge "$existing_pr"
             exit 0
           fi
 
@@ -93,4 +109,4 @@ jobs:
             --title "chore: sync main into develop" \
             --body "Automated sync after release ${{ needs.tag.outputs.new_tag }}, so develop doesn't drift behind main and future develop -> main PRs don't get blocked as out-of-date.")"
 
-          gh pr merge "$pr_url" --auto --merge
+          enable_automerge "$pr_url"
