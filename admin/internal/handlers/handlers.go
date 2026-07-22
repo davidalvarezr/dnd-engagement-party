@@ -137,6 +137,30 @@ func (s *Server) DeleteGuest(w http.ResponseWriter, r *http.Request) {
 	s.renderOOBUpdate(w, r)
 }
 
+// resetConfirmPhrase must be typed exactly into the danger-zone modal
+// before ResetData will call the upstream API. Kept in sync with the
+// main app's own check in src/app/api/admin/reset/route.ts.
+const resetConfirmPhrase = "RESET RSVPS"
+
+func (s *Server) ResetData(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		statusMessage(w, "Invalid form submission")
+		return
+	}
+
+	if r.PostFormValue("confirm") != resetConfirmPhrase {
+		statusMessage(w, "Confirmation text does not match — nothing was reset")
+		return
+	}
+
+	if err := s.Client.ResetData(r.Context(), resetConfirmPhrase); err != nil {
+		statusMessage(w, errMessage(err))
+		return
+	}
+
+	s.renderOOBUpdate(w, r)
+}
+
 func (s *Server) InviteeDetail(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil {

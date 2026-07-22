@@ -51,6 +51,9 @@ go run .
 
 Then open `http://localhost:4100` (or whatever `PORT` you set).
 
+See [`admin/RUNNING.md`](admin/RUNNING.md) for a fuller walkthrough of
+running it against local dev vs. pointing it at prod.
+
 Dev commands (run from `admin/`):
 
 - `go test ./...` — run tests
