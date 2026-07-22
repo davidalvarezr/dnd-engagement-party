@@ -120,24 +120,26 @@ export function UpsertForm({ invitation, onSubmit, onCancel }: Props) {
                 <div className={styles.intro}>
                     <div className={styles.illustrations}>
                         <Image
-                            src="/images/invite/fun-person-1.svg"
+                            src="/images/invite/david-group.svg"
                             alt=""
-                            width={190}
-                            height={162}
+                            width={128}
+                            height={139}
                             className={styles.funPerson}
                             aria-hidden
                         />
                         <Image
-                            src="/images/invite/fun-person-2.svg"
+                            src="/images/invite/danielle-group.svg"
                             alt=""
-                            width={137}
-                            height={155}
+                            width={203}
+                            height={79}
                             className={styles.funPerson}
                             aria-hidden
                         />
                     </div>
                     <div className={styles.paragraphs}>
-                        <p className={typography.p}>
+                        <p
+                            className={`${typography.p} ${styles.leadParagraph}`}
+                        >
                             <strong>Okay, let’s GO</strong> fêter nos
                             fiançialles !
                         </p>
@@ -159,8 +161,12 @@ export function UpsertForm({ invitation, onSubmit, onCancel }: Props) {
                 <WavyDivider />
 
                 <section className={styles.section}>
-                    <h3 className={typography.h3}>infos</h3>
-                    <h4 className={typography.h4}>horaires</h4>
+                    <h3 className={`${typography.h3} ${styles.headingLeft}`}>
+                        infos
+                    </h3>
+                    <h4 className={`${typography.h4} ${styles.headingLeft}`}>
+                        horaires
+                    </h4>
 
                     <div className={styles.scheduleRow}>
                         <div className={styles.leftParagraphs}>
@@ -266,7 +272,9 @@ export function UpsertForm({ invitation, onSubmit, onCancel }: Props) {
                 <WavyDivider />
 
                 <section className={styles.section}>
-                    <h3 className={typography.h3}>questionnaire</h3>
+                    <h3 className={`${typography.h3} ${styles.headingLeft}`}>
+                        questionnaire
+                    </h3>
 
                     {/* Q1 — Attendance */}
                     <fieldset className={styles.fieldset}>

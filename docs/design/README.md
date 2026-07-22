@@ -89,3 +89,35 @@ stand-ins for the real licensed families, loaded from the Adobe Fonts (Typekit) 
   usage of those variables. Also fixed the `body` rule's stale `Arial, Helvetica, sans-serif`
   fallback to use `var(--font-body)` instead, since it was never actually wired to the
   display/body font variables.
+
+## Design feedback round (2026-07-22)
+
+Danielle dropped a follow-up Figma export batch (`whole-page-v2.png`,
+`components/button-states.png`, `components/david group.svg`, `components/danielle group.svg`)
+and reviewed the live form. Reconciled as follows:
+
+- **Illustration swap**: `whole-page-v2.png` / the two "group" SVGs label which fun-person
+  illustration represents whom via a hand-drawn arrow + name. Per David's instruction, replaced
+  the plain `fun-person-1.svg`/`fun-person-2.svg` outright with the new annotated assets:
+  `public/images/invite/david-group.svg` (was fun-person-1) and
+  `public/images/invite/danielle-group.svg` (was fun-person-2), wired into
+  `UpsertForm.tsx`. The old `fun-person-*.svg` files were deleted (no longer referenced).
+- **Button colors**: `components/button-states.png` uses a noticeably darker teal than what was
+  implemented — sampled `#004c4d` (rest) / `#003f40` (hover), vs. the previous `#0d6c6e` /
+  `#055556`. The focus ring (`#00ffcc`) and disabled fill (`#d2d2d2`) are unchanged. Added
+  dedicated `--button-bg` / `--button-bg-hover` tokens (`InviteShell.module.css`) so the darker
+  tone applies only to `Button.module.css`, without affecting the shared `--color-accent` used
+  by Radio/Checkbox/NumberInput borders.
+- **Alignment fixes** (`UpsertForm.tsx` / `UpsertForm.module.css`):
+  - "infos"/"horaires"/"questionnaire" headings were centered (`typography.h3`/`.h4` default)
+    while their body copy is left-aligned — added a local `.headingLeft` modifier so these three
+    headings left-align without touching the shared typography module (the right-aligned "lieu"
+    heading is untouched).
+  - The lead paragraph ("Okay, let's GO... :)") and the `.leftParagraphs` block now cap at
+    `max-width: 75%` (with `align-self: flex-end` on the lead paragraph) so the right/left
+    alignment reads more clearly instead of spanning the full content width.
+- **Question spacing**: `.fieldset` gap (title → answer control) and `.optionList` gap
+  (radio-to-radio / checkbox-to-checkbox) were uneven (1rem vs 0.75rem) and both felt tight.
+  Both are now `1.25rem`.
+- **Font fix**: the number displayed in `NumberInput` was set to `var(--font-display)`
+  (Suburban); changed to `var(--font-body)` (Futura 100) to match all other body text.
