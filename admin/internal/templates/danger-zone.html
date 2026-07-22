@@ -1,0 +1,28 @@
+{{define "danger-zone"}}<section class="danger-zone" aria-label="Danger zone">
+    <h2>Danger zone</h2>
+    <div class="danger-zone-row">
+        <div class="danger-zone-copy">
+            <strong>Reset all RSVP data</strong>
+            <p>Clears every attendance answer, activity sign-up, and boat spot for every invitee. The invitee list itself &mdash; names and couples &mdash; is not touched. This can&rsquo;t be undone.</p>
+        </div>
+        <button type="button" class="btn btn-danger" onclick="document.getElementById('danger-zone-dialog').showModal()">Reset all RSVP data&hellip;</button>
+    </div>
+</section>
+
+<dialog id="danger-zone-dialog" class="danger-zone-dialog">
+    <form class="danger-zone-form" hx-post="/reset" hx-target="#page-status" hx-swap="innerHTML"
+          hx-on::after-request="document.getElementById('danger-zone-dialog').close(); this.reset(); this.querySelector('button[type=submit]').disabled = true">
+        <h3>Reset all RSVP data?</h3>
+        <p>This clears attendance, activity sign-ups, and boat info for <strong>every</strong> invitee. Names and couples stay as they are. There is no undo.</p>
+        <div class="field">
+            <label for="danger-zone-confirm">Type <code>RESET RSVPS</code> to confirm</label>
+            <input id="danger-zone-confirm" name="confirm" type="text" autocomplete="off" autocapitalize="off" spellcheck="false"
+                   oninput="this.form.querySelector('button[type=submit]').disabled = this.value !== 'RESET RSVPS'" />
+        </div>
+        <div class="danger-zone-actions">
+            <button type="button" class="btn btn-ghost" onclick="this.form.reset(); this.form.querySelector('button[type=submit]').disabled = true; document.getElementById('danger-zone-dialog').close()">Cancel</button>
+            <button type="submit" class="btn btn-danger" disabled>Reset all RSVP data</button>
+        </div>
+    </form>
+</dialog>
+{{end}}

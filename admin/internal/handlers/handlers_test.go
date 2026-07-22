@@ -98,6 +98,59 @@ func TestCreateInviteeSendsNameAndRefreshesDashboard(t *testing.T) {
 	}
 }
 
+func TestResetDataRejectsWrongConfirmation(t *testing.T) {
+	s := fakeUpstream(t, func(w http.ResponseWriter, r *http.Request) {
+		t.Errorf("upstream should not be called for a wrong confirmation, got %s", r.URL.Path)
+	})
+
+	form := url.Values{"confirm": {"nope"}}
+	req := httptest.NewRequest(http.MethodPost, "/reset", strings.NewReader(form.Encode()))
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	rec := httptest.NewRecorder()
+
+	s.ResetData(rec, req)
+
+	if !strings.Contains(rec.Body.String(), "does not match") {
+		t.Errorf("body = %q, want a confirmation-mismatch message", rec.Body.String())
+	}
+}
+
+func TestResetDataSendsConfirmationAndRefreshesDashboard(t *testing.T) {
+	var resetCalled bool
+	s := fakeUpstream(t, func(w http.ResponseWriter, r *http.Request) {
+		switch {
+		case r.Method == http.MethodPost && r.URL.Path == "/api/admin/reset":
+			resetCalled = true
+			var body map[string]string
+			_ = json.NewDecoder(r.Body).Decode(&body)
+			if body["confirm"] != "RESET RSVPS" {
+				t.Errorf("posted confirm = %q, want RESET RSVPS", body["confirm"])
+			}
+			w.WriteHeader(http.StatusNoContent)
+		case r.URL.Path == "/api/admin/invitations":
+			_ = json.NewEncoder(w).Encode([]client.Invitation{})
+		case r.URL.Path == "/api/admin/stats":
+			_ = json.NewEncoder(w).Encode(client.Stats{})
+		default:
+			t.Errorf("unexpected upstream request: %s %s", r.Method, r.URL.Path)
+		}
+	})
+
+	form := url.Values{"confirm": {"RESET RSVPS"}}
+	req := httptest.NewRequest(http.MethodPost, "/reset", strings.NewReader(form.Encode()))
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	rec := httptest.NewRecorder()
+
+	s.ResetData(rec, req)
+
+	if !resetCalled {
+		t.Fatal("expected the upstream reset endpoint to be called")
+	}
+	if !strings.Contains(rec.Body.String(), `hx-swap-oob="innerHTML:#stats-panel"`) {
+		t.Errorf("body missing OOB stats refresh, got: %s", rec.Body.String())
+	}
+}
+
 func TestLinkPreviewRejectsSameGuestTwice(t *testing.T) {
 	s := fakeUpstream(t, func(w http.ResponseWriter, r *http.Request) {
 		t.Errorf("upstream should not be called, got %s", r.URL.Path)
