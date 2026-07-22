@@ -63,7 +63,7 @@ jobs:
     needs: [tag, build-and-push]
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       pull-requests: write
     steps:
       - uses: actions/checkout@v4
@@ -79,13 +79,18 @@ jobs:
             exit 0
           fi
 
-          if [ "$(gh pr list --base develop --head main --state open --json number --jq 'length')" != "0" ]; then
-            echo "sync PR already open"
+          existing_pr="$(gh pr list --base develop --head main --state open --json number --jq '.[0].number')"
+
+          if [ -n "$existing_pr" ]; then
+            echo "sync PR #$existing_pr already open, ensuring auto-merge is enabled"
+            gh pr merge "$existing_pr" --auto --merge
             exit 0
           fi
 
-          gh pr create \
+          pr_url="$(gh pr create \
             --base develop \
             --head main \
             --title "chore: sync main into develop" \
-            --body "Automated sync after release ${{ needs.tag.outputs.new_tag }}, so develop doesn't drift behind main and future develop -> main PRs don't get blocked as out-of-date."
+            --body "Automated sync after release ${{ needs.tag.outputs.new_tag }}, so develop doesn't drift behind main and future develop -> main PRs don't get blocked as out-of-date.")"
+
+          gh pr merge "$pr_url" --auto --merge
