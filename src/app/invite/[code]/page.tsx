@@ -13,7 +13,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const invitation = await getInvitationByCode(code)
     if (!invitation) return {}
 
-    return { title: "D&D Engagement Party" }
+    const names = invitation.guests.map((g) => g.name).join(" & ")
+    const title = `${names} — D&D Engagement Party`
+    const description =
+        "⚠️ Don't share this link, it's your personal invitation ⚠️ — You are invited to our engagement party!"
+
+    return {
+        title,
+        description,
+        openGraph: { title, description },
+        twitter: { card: "summary", title, description },
+    }
 }
 
 export default async function InvitePage({ params }: Props) {
