@@ -1,6 +1,6 @@
 ---
 name: commit-message
-description: Draft a commit message for the staged changes using the extended Angular Conventional Commits convention. Use whenever the user asks for a commit message, asks to commit, or asks you to describe staged/pending changes as a commit.
+description: Draft a commit message for the staged changes using the extended Angular Conventional Commits convention. Use whenever a commit is about to be made for this repo — whether the user asks for a message or to commit, or you're the one about to commit on your own initiative (e.g. finishing a task or wrapping up worktree work). Check this skill before any `git commit` call, not just user-requested ones.
 model: haiku
 ---
 

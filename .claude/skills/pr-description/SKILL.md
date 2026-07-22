@@ -1,6 +1,6 @@
 ---
 name: pr-description
-description: Draft the description body for a pull request. Use whenever creating a PR (gh pr create) or asked to write/update a PR description.
+description: Draft the description body for a pull request. Use whenever a PR is being created (gh pr create) or an existing PR's description needs writing/updating — regardless of whether the user explicitly asked for it, including when you're creating the PR on your own initiative.
 model: haiku
 ---
 
