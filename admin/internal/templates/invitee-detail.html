@@ -2,6 +2,7 @@
     {{range .Guests}}<div class="detail-guest"><span>{{.Name}}</span><span class="badge" data-status="{{if eq .StatusLabel "Attending"}}attending{{else if eq .StatusLabel "Not attending"}}not-attending{{end}}">{{.StatusLabel}}</span></div>
     {{end}}
 </div>
+<div class="detail-link"><a href="{{.InviteURL}}" target="_blank" rel="noopener">{{.InviteURL}}</a></div>
 <div>{{.RespondedLabel}}</div>
 {{if .Activities}}<div class="detail-activities">{{range .Activities}}<span>{{.}}</span>{{end}}</div>
 {{else}}<div class="empty-note">No activities picked</div>
