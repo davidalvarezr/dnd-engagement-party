@@ -465,3 +465,76 @@ section > h2 {
     font-size: var(--text-sm);
     color: var(--muted);
 }
+
+/* Danger zone -------------------------------------------------------------- */
+
+.danger-zone {
+    border: 1px solid var(--primary);
+    border-radius: var(--radius);
+    padding: var(--space-4);
+}
+
+.danger-zone-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+}
+
+.danger-zone-copy p {
+    margin: var(--space-1) 0 0;
+    color: var(--muted);
+    font-size: var(--text-sm);
+    max-width: 40rem;
+}
+
+.danger-zone-dialog {
+    max-width: 28rem;
+    width: calc(100% - var(--space-8));
+    border: 1px solid var(--primary);
+    border-radius: var(--radius);
+    padding: var(--space-6);
+    background: var(--bg);
+    color: var(--ink);
+    box-shadow: var(--shadow-sm);
+}
+
+.danger-zone-dialog::backdrop {
+    background: oklch(0 0 0 / 0.5);
+}
+
+.danger-zone-form {
+    display: grid;
+    gap: var(--space-4);
+}
+
+.danger-zone-form h3 {
+    font-size: var(--text-lg);
+    font-weight: 600;
+}
+
+.danger-zone-form p {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--muted);
+}
+
+.danger-zone-form code {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.1rem 0.3rem;
+}
+
+.danger-zone-form .field input {
+    width: 100%;
+}
+
+.danger-zone-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-3);
+}
