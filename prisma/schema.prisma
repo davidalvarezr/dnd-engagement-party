@@ -49,5 +49,4 @@ model BoatInfo {
 enum Activity {
   DESCENTE_RHONE
   BBQ_MIDI
-  BBQ_SOIR
 }
