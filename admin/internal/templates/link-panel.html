@@ -1,0 +1,23 @@
+{{define "link-panel"}}<section id="link-panel" aria-label="Link two people into a couple">{{template "link-panel-inner" .}}</section>
+{{end}}
+
+{{define "link-panel-inner"}}<h2>Link two people</h2>
+{{if lt (len .) 2}}<p class="empty-note">Need at least two unpaired singles to link.</p>
+{{else}}<form class="form-inline" hx-post="/link/preview" hx-target="#link-result" hx-swap="innerHTML">
+    <div class="field">
+        <label for="link-a">Person A</label>
+        <select id="link-a" name="guestIdA" required>
+            {{range .}}<option value="{{.GuestID}}">{{.Name}}</option>{{end}}
+        </select>
+    </div>
+    <div class="field">
+        <label for="link-b">Person B</label>
+        <select id="link-b" name="guestIdB" required>
+            {{range .}}<option value="{{.GuestID}}">{{.Name}}</option>{{end}}
+        </select>
+    </div>
+    <button class="btn btn-accent" type="submit">Preview link</button>
+</form>
+{{end}}
+<div id="link-result" class="link-result"></div>
+{{end}}

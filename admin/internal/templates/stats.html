@@ -1,0 +1,31 @@
+{{define "stats-panel"}}<section id="stats-panel" aria-label="RSVP stats">{{template "stats-panel-inner" .}}</section>
+{{end}}
+
+{{define "stats-panel-inner"}}<h2>Stats</h2>
+<dl class="stat-grid">
+    <div class="stat">
+        <dt>Response rate</dt>
+        <dd>{{.ResponseRateLabel}} <small>({{.Invitations.Responded}} of {{.Invitations.Total}})</small></dd>
+    </div>
+    <div class="stat">
+        <dt>Attending</dt>
+        <dd>{{.Guests.Participating}} <small>guests</small></dd>
+    </div>
+    <div class="stat">
+        <dt>Not attending</dt>
+        <dd>{{.Guests.NotParticipating}} <small>guests</small></dd>
+    </div>
+    <div class="stat">
+        <dt>Undecided</dt>
+        <dd>{{.Guests.Undecided}} <small>guests</small></dd>
+    </div>
+    <div class="stat">
+        <dt>Boat</dt>
+        <dd>{{.Boat.AvailableSpots}} <small>offered</small> / {{.Boat.NeededSpots}} <small>needed</small></dd>
+    </div>
+</dl>
+<dl class="activity-breakdown">
+    {{range .ActivityRows}}<div><dt>{{.Label}}</dt><dd>{{.Count}}</dd></div>
+    {{end}}
+</dl>
+{{end}}

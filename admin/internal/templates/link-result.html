@@ -1,0 +1,31 @@
+{{define "link-result"}}{{if .Conflict}}<p class="comparison-conflict-note">Both {{.NameA}} and {{.NameB}} have already responded. Pick which answers to keep — the other invitation's answers will be discarded.</p>
+<form hx-post="/link/confirm" hx-target="#page-status" hx-swap="innerHTML">
+    <input type="hidden" name="guestIdA" value="{{.GuestIDA}}" />
+    <input type="hidden" name="guestIdB" value="{{.GuestIDB}}" />
+    <div class="comparison-grid">
+        <div class="comparison-card">
+            <label><input type="radio" name="keepAnswersFrom" value="A" required /> Keep {{.NameA}}'s answers</label>
+            {{template "answer-summary" .InvitationA}}
+        </div>
+        <div class="comparison-card">
+            <label><input type="radio" name="keepAnswersFrom" value="B" /> Keep {{.NameB}}'s answers</label>
+            {{template "answer-summary" .InvitationB}}
+        </div>
+    </div>
+    <button class="btn btn-accent" type="submit">Confirm link</button>
+</form>
+{{else}}<form hx-post="/link/confirm" hx-target="#page-status" hx-swap="innerHTML">
+    <input type="hidden" name="guestIdA" value="{{.GuestIDA}}" />
+    <input type="hidden" name="guestIdB" value="{{.GuestIDB}}" />
+    <p>Link {{.NameA}} and {{.NameB}} into one couple?</p>
+    <button class="btn btn-accent" type="submit">Confirm link</button>
+</form>
+{{end}}
+{{end}}
+
+{{define "answer-summary"}}<div>{{.RespondedLabel}}</div>
+{{if .Activities}}<div class="detail-activities">{{range .Activities}}<span>{{.}}</span>{{end}}</div>
+{{else}}<div class="empty-note">No activities picked</div>
+{{end}}
+{{if .BoatLabel}}<div>{{.BoatLabel}}</div>{{end}}
+{{end}}
