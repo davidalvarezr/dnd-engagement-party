@@ -60,6 +60,10 @@ services:
     restart: unless-stopped
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      # ghcr.io package is private, so watchtower needs the host's
+      # docker login credentials to check for updates. Run:
+      #   docker login ghcr.io -u <user> -p <PAT with read:packages scope>
+      - ${DOCKER_CONFIG:-$HOME/.docker/config.json}:/config.json:ro
     environment:
       WATCHTOWER_CLEANUP: "true"
     command: --interval 300 web
