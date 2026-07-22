@@ -30,6 +30,11 @@
     text-align: right;
 }
 
+.leadParagraph {
+    max-width: 75%;
+    align-self: flex-end;
+}
+
 .link {
     text-decoration: underline;
 }
@@ -51,6 +56,11 @@
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+    max-width: 75%;
+    text-align: left;
+}
+
+.headingLeft {
     text-align: left;
 }
 
@@ -67,7 +77,7 @@
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.25rem;
 }
 
 .legend {
@@ -81,7 +91,7 @@
 .optionList {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 1.25rem;
 }
 
 .submitRow {

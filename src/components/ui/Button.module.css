@@ -3,7 +3,7 @@
     font-weight: 700;
     font-size: 1.375rem;
     color: var(--color-cream);
-    background: var(--color-accent);
+    background: var(--button-bg);
     border: 2px solid transparent;
     border-radius: 999px;
     padding: 0.6rem 2.5rem;
@@ -14,7 +14,7 @@
 }
 
 .button:hover:not(:disabled) {
-    background: var(--color-accent-hover);
+    background: var(--button-bg-hover);
 }
 
 .button:focus-visible {

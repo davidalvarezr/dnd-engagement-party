@@ -1,10 +1,14 @@
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { notFound } from "next/navigation"
 import { InviteForm } from "@/components/InviteForm"
 import { getInvitationByCode } from "@/lib/invitations"
 
 type Props = {
     params: Promise<{ code: string }>
+}
+
+export const viewport: Viewport = {
+    themeColor: "#19989e",
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -23,6 +27,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         description,
         openGraph: { title, description },
         twitter: { card: "summary", title, description },
+        manifest: `/invite/${code}/manifest.webmanifest`,
+        appleWebApp: {
+            capable: true,
+            title: "D&D Party",
+            statusBarStyle: "default",
+        },
+        icons: {
+            apple: "/icons/apple-touch-icon.png",
+        },
     }
 }
 
