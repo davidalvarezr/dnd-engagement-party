@@ -124,6 +124,14 @@ func (c *Client) LinkGuests(ctx context.Context, guestIDA, guestIDB int, keepAns
 	return &invitation, nil
 }
 
+// ResetData clears every RSVP (attendance, activity sign-ups, boat info)
+// across all invitations, leaving the invitee list and pairings intact.
+// confirm must match the main app's confirmation phrase exactly.
+func (c *Client) ResetData(ctx context.Context, confirm string) error {
+	body := map[string]string{"confirm": confirm}
+	return c.do(ctx, http.MethodPost, "/api/admin/reset", body, nil)
+}
+
 func (c *Client) Stats(ctx context.Context) (*Stats, error) {
 	var stats Stats
 	if err := c.do(ctx, http.MethodGet, "/api/admin/stats", nil, &stats); err != nil {

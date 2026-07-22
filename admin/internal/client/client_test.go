@@ -50,6 +50,27 @@ func TestDoReturnsAPIErrorOnNon2xx(t *testing.T) {
 	}
 }
 
+func TestResetDataSendsConfirmationPhrase(t *testing.T) {
+	var gotBody map[string]string
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost || r.URL.Path != "/api/admin/reset" {
+			t.Errorf("request = %s %s, want POST /api/admin/reset", r.Method, r.URL.Path)
+		}
+		_ = json.NewDecoder(r.Body).Decode(&gotBody)
+		w.WriteHeader(http.StatusNoContent)
+	}))
+	defer server.Close()
+
+	c := New(server.URL, "secret")
+	if err := c.ResetData(context.Background(), "RESET RSVPS"); err != nil {
+		t.Fatalf("ResetData() error = %v", err)
+	}
+
+	if gotBody["confirm"] != "RESET RSVPS" {
+		t.Errorf("request body = %+v, want confirm = RESET RSVPS", gotBody)
+	}
+}
+
 func TestLinkGuestsOmitsKeepAnswersFromWhenEmpty(t *testing.T) {
 	var body map[string]any
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

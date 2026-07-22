@@ -35,6 +35,7 @@ func main() {
 	mux.HandleFunc("GET /fragments/invitees/{id}", server.InviteeDetail)
 	mux.HandleFunc("POST /link/preview", server.LinkPreview)
 	mux.HandleFunc("POST /link/confirm", server.LinkConfirm)
+	mux.HandleFunc("POST /reset", server.ResetData)
 
 	log.Printf("admin app listening on :%s (target %s)", cfg.Port, cfg.TargetURL)
 	log.Fatal(http.ListenAndServe(":"+cfg.Port, mux))
