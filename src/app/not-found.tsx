@@ -1,5 +1,5 @@
 import { NotInvited } from "@/components/NotInvited"
 
-export default function Home() {
+export default function NotFound() {
     return <NotInvited />
 }
