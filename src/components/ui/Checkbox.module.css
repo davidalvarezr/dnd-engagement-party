@@ -25,18 +25,24 @@
     border-color: var(--color-accent);
 }
 
+.input:checked::before,
 .input:checked::after {
-    content: "×";
+    content: "";
     position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--font-body);
-    font-weight: 700;
-    font-size: 1rem;
-    line-height: 1;
-    color: var(--color-text);
+    top: 50%;
+    left: 50%;
+    width: 65%;
+    height: 2px;
+    background: var(--color-text);
+    border-radius: 1px;
+}
+
+.input:checked::before {
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.input:checked::after {
+    transform: translate(-50%, -50%) rotate(-45deg);
 }
 
 .input:focus-visible {

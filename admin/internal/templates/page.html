@@ -1,0 +1,39 @@
+{{define "page"}}<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Guest List Admin</title>
+    <link rel="stylesheet" href="/static/style.css" />
+    <script src="/static/htmx.min.js"></script>
+</head>
+<body>
+    <main class="page">
+        <header class="page-header">
+            <h1>Guest List</h1>
+            <p>{{.TargetURL}}</p>
+        </header>
+
+        <div id="page-status" class="form-error" role="status"></div>
+
+        {{template "stats-panel" .Stats}}
+
+        <section aria-label="Add a person">
+            <h2>Add person</h2>
+            <form class="form-inline" hx-post="/invitees" hx-target="#page-status" hx-swap="innerHTML"
+                  hx-on::after-request="if(event.detail.successful) this.reset()">
+                <div class="field">
+                    <label for="add-name">Name</label>
+                    <input id="add-name" name="name" type="text" required autocomplete="off" />
+                </div>
+                <button class="btn btn-accent" type="submit">Add person</button>
+            </form>
+        </section>
+
+        {{template "link-panel" .Singles}}
+
+        {{template "invitee-list" .Invitations}}
+    </main>
+</body>
+</html>
+{{end}}

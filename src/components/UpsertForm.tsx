@@ -14,7 +14,7 @@ import { Radio } from "./ui/Radio"
 import { WavyDivider } from "./ui/WavyDivider"
 
 type Invitation = NonNullable<Awaited<ReturnType<typeof getInvitationByCode>>>
-type Activity = "DESCENTE_RHONE" | "BBQ_MIDI" | "BBQ_SOIR"
+type Activity = "DESCENTE_RHONE" | "BBQ_MIDI"
 
 type Props = {
     invitation: Invitation
@@ -165,13 +165,10 @@ export function UpsertForm({ invitation, onSubmit, onCancel }: Props) {
                     <div className={styles.scheduleRow}>
                         <div className={styles.leftParagraphs}>
                             <p className={typography.p}>
-                                Descente du Rhône : <strong>10h</strong>
+                                Descente du Rhône : <strong>11h00</strong>
                             </p>
                             <p className={typography.p}>
-                                BBQ midi : à partir de <strong>13h</strong>
-                            </p>
-                            <p className={typography.p}>
-                                BBQ soir : à partir de <strong>18h</strong>
+                                BBQ : à partir de <strong>14h30</strong>
                             </p>
                         </div>
                         <BoatDivider align="right" />
@@ -211,6 +208,9 @@ export function UpsertForm({ invitation, onSubmit, onCancel }: Props) {
                         </p>
                         <p className={typography.p}>
                             Arrêt <strong>Vernier, De Sauvage</strong>, Genève
+                        </p>
+                        <p className={typography.p}>
+                            Ou l’arrêt <strong>Vernier, Barde</strong>
                         </p>
                     </div>
                 </section>
@@ -306,7 +306,7 @@ export function UpsertForm({ invitation, onSubmit, onCancel }: Props) {
                                     }
                                     label={
                                         <>
-                                            <strong>10h00</strong> Descente du
+                                            <strong>11h00</strong> Descente du
                                             Rhône
                                         </>
                                     }
@@ -316,16 +316,7 @@ export function UpsertForm({ invitation, onSubmit, onCancel }: Props) {
                                     onChange={() => toggleActivity("BBQ_MIDI")}
                                     label={
                                         <>
-                                            <strong>13h00</strong> BBQ midi
-                                        </>
-                                    }
-                                />
-                                <Checkbox
-                                    checked={activities.includes("BBQ_SOIR")}
-                                    onChange={() => toggleActivity("BBQ_SOIR")}
-                                    label={
-                                        <>
-                                            <strong>18h00</strong> BBQ soir
+                                            <strong>14h30</strong> BBQ
                                         </>
                                     }
                                 />

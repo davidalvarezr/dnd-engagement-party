@@ -1,0 +1,15 @@
+name: CI Admin
+
+on:
+  pull_request:
+    branches:
+      - develop
+      - main
+    paths:
+      - "admin/**"
+      - ".github/workflows/ci-admin.yml"
+      - ".github/workflows/verify-admin.yml"
+
+jobs:
+  verify:
+    uses: ./.github/workflows/verify-admin.yml

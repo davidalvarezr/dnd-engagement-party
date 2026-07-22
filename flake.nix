@@ -8,53 +8,77 @@
       system = "x86_64-linux";
       pkgs = nixpkgs.legacyPackages.${system};
 
-      claudeSettingsLocal = {
-        enabledPlugins = {
-          "vercel@claude-plugins-official" = true;
-        };
-        permissions = {
-          allow = [
-            "Bash(pnpm dev:*)"
-            "Bash(pnpm approve-builds:*)"
-            "Bash(pnpm install:*)"
-            "Bash(pnpm rebuild:*)"
-            "Bash(kill %1)"
-            "Bash(pnpm add *)"
-            "Bash(pnpm --version)"
-            "Bash(find /home/david -name \"pnpm-build-approved.json\" 2>/dev/null | head -5)"
-            "Read(//home/david/**)"
-            "Bash(pnpm prisma *)"
-            "Bash(DATABASE_URL=\"file:./dev.db\" pnpm prisma migrate dev --name init)"
-            "Bash(mkdir -p /home/david/Projects/dnd-engagement-party/src/app/api/invitations/\\\\[code\\\\]/response)"
-            "Bash(mkdir -p /home/david/Projects/dnd-engagement-party/src/app/invite/\\\\[code\\\\])"
-            "Bash(pnpm build *)"
-            "Bash(docker compose *)"
-            "Bash(sudo ss -tlnp)"
-            "Bash(systemctl --user list-units --type=service --state=running)"
-            "Bash(systemctl list-units *)"
-            "Bash(systemctl status *)"
-            "Bash(docker stop *)"
-            "Bash(pnpm tsx *)"
-            "Bash(vercel)"
-            "Bash(vercel env *)"
-            "Bash(vercel --force)"
-          ];
-          additionalDirectories = [
-            "/home/david/Projects/dnd-engagement-party/src/app/api/invitations/[code]"
-            "/home/david/Projects/dnd-engagement-party/src/app/invite"
-          ];
-        };
-      };
+      db = pkgs.writeShellScriptBin "db" ''
+        set -euo pipefail
+        cd "$(git rev-parse --show-toplevel)"
+        docker compose -f docker-compose.local.yml up -d
+        echo "Waiting for Postgres..."
+        until docker exec "$(docker compose -f docker-compose.local.yml ps -q db)" pg_isready -U postgres -d dnd_engagement_party >/dev/null 2>&1; do
+          sleep 1
+        done
+        echo "Postgres is ready on localhost:5432"
+      '';
 
-      claudeSettingsLocalJson = pkgs.writeText "claude-settings-local.json"
-        (builtins.toJSON claudeSettingsLocal);
+      run = pkgs.writeShellScriptBin "run" ''
+        set -euo pipefail
+        cd "$(git rev-parse --show-toplevel)"
+        if [ ! -f .env ]; then
+          echo ".env not found - run: cp .env.example .env, then fill it in" >&2
+          exit 1
+        fi
+        db
+        pnpm install
+        pnpm dev
+      '';
+
+      run-admin = pkgs.writeShellScriptBin "run-admin" ''
+        set -euo pipefail
+        cd "$(git rev-parse --show-toplevel)/admin"
+        if [ ! -f .env ]; then
+          echo "admin/.env not found - run: cp admin/.env.example admin/.env, then fill it in" >&2
+          exit 1
+        fi
+        set -a
+        source .env
+        set +a
+        go run .
+      '';
+
+      check = pkgs.writeShellScriptBin "check" ''
+        set -euo pipefail
+        repo_root="$(git rev-parse --show-toplevel)"
+
+        echo "==> Main app"
+        cd "$repo_root"
+        pnpm install --frozen-lockfile
+        pnpm format:check
+        pnpm lint
+        pnpm test
+        pnpm prisma generate
+        POSTGRES_PRISMA_URL="''${POSTGRES_PRISMA_URL:-postgresql://user:pass@localhost:5432/db}" pnpm build
+
+        echo "==> Admin app"
+        cd "$repo_root/admin"
+        test -z "$(gofmt -l .)"
+        go vet ./...
+        go build ./...
+        go test ./...
+
+        echo "All checks passed."
+      '';
     in
     {
       devShells.${system}.default = pkgs.mkShell {
+        buildInputs = [ pkgs.nodejs_22 pkgs.pnpm pkgs.go db run run-admin check ];
+
         shellHook = ''
-          mkdir -p .claude
-          cp -f ${claudeSettingsLocalJson} .claude/settings.local.json
-          chmod u+w .claude/settings.local.json
+          echo ""
+          echo "dnd-engagement-party dev shell - available commands:"
+          echo "  db          start the local Postgres (docker compose)"
+          echo "  run         run the main app (pnpm dev)"
+          echo "  run-admin   run the admin app (go run)"
+          echo "  check       run every check both apps run in CI"
+          echo ""
         '';
       };
     };

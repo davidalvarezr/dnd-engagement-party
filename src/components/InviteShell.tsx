@@ -11,7 +11,7 @@ export function InviteShell({ children }: Props) {
         <div className={styles.page}>
             <header className={styles.header}>
                 <Image
-                    src="/images/invite/flowers.png"
+                    src="/images/invite/flowers.svg"
                     alt=""
                     width={402}
                     height={473}
@@ -29,10 +29,10 @@ export function InviteShell({ children }: Props) {
 
             <footer className={styles.footer}>
                 <Image
-                    src="/images/invite/flowers-bottom.png"
+                    src="/images/invite/flowers-bottom.svg"
                     alt=""
-                    width={790}
-                    height={394}
+                    width={395}
+                    height={197}
                     className={styles.flowersBottom}
                     aria-hidden
                 />
