@@ -121,7 +121,7 @@ func TestNewLinkPreviewViewConflict(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			preview := NewLinkPreviewView(1, 2, tt.invA, tt.invB)
+			preview := NewLinkPreviewView(1, 2, tt.invA, tt.invB, "https://example.com")
 			if preview.Conflict != tt.wantConflict {
 				t.Errorf("Conflict = %v, want %v", preview.Conflict, tt.wantConflict)
 			}

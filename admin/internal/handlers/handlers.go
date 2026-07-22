@@ -177,7 +177,7 @@ func (s *Server) InviteeDetail(w http.ResponseWriter, r *http.Request) {
 	for _, inv := range invitations {
 		if inv.ID == id {
 			w.Header().Set("Content-Type", "text/html; charset=utf-8")
-			_ = templates.Templates.ExecuteTemplate(w, "invitee-detail", NewInvitationDetailView(inv))
+			_ = templates.Templates.ExecuteTemplate(w, "invitee-detail", NewInvitationDetailView(inv, s.TargetURL))
 			return
 		}
 	}
@@ -212,7 +212,7 @@ func (s *Server) LinkPreview(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	_ = templates.Templates.ExecuteTemplate(w, "link-result", NewLinkPreviewView(guestIDA, guestIDB, invA, invB))
+	_ = templates.Templates.ExecuteTemplate(w, "link-result", NewLinkPreviewView(guestIDA, guestIDB, invA, invB, s.TargetURL))
 }
 
 func (s *Server) LinkConfirm(w http.ResponseWriter, r *http.Request) {
