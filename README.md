@@ -92,10 +92,9 @@ cd dnd-engagement-party
 cp .env.prod.example .env
 # fill in real values in .env
 chmod 600 .env
-# real guest data never lives in git or the image - place these two
-# gitignored files here manually (scp from your dev machine)
+# real guest data never lives in git or the image - place this
+# gitignored file here manually (scp from your dev machine)
 #   prisma/guests-data.ts
-#   prisma/fixups.ts
 
 # the image is private - authenticate the NAS's Docker daemon once so
 # both this pull and Watchtower's periodic pulls succeed. Use a GitHub
