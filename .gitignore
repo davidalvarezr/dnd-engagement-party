@@ -58,3 +58,4 @@ next-env.d.ts
 /prisma/guests-data.ts
 /docs/diagrams/guest/guest-list.csv
 /prisma/fixups.ts
+/prisma/invitee-list.csv

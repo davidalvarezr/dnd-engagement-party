@@ -1,0 +1,13 @@
+{{define "import-panel"}}<section id="import-panel" aria-label="Import invitees from CSV">
+    <h2>Import invitees</h2>
+    <p class="empty-note">Upload a guest1,guest2,code CSV. Re-uploading the same file is safe &mdash; rows that already exist are skipped.</p>
+    <form class="form-inline" hx-post="/import/preview" hx-encoding="multipart/form-data" hx-target="#import-result" hx-swap="innerHTML">
+        <div class="field">
+            <label for="import-file">CSV file</label>
+            <input id="import-file" name="file" type="file" accept=".csv" required />
+        </div>
+        <button class="btn btn-accent" type="submit">Preview import</button>
+    </form>
+    <div id="import-result" class="import-result"></div>
+</section>
+{{end}}

@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"sync"
 
 	"admin/internal/client"
 	"admin/internal/templates"
@@ -17,6 +18,13 @@ import (
 type Server struct {
 	Client    *client.Client
 	TargetURL string
+
+	// pendingMu guards the most recently previewed (but not yet confirmed)
+	// CSV import. Only one pending import is tracked at a time; confirming
+	// requires the token to match, so a stale or unknown token is rejected.
+	pendingMu    sync.Mutex
+	pendingRows  []client.ImportRow
+	pendingToken string
 }
 
 type dashboardData struct {

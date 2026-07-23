@@ -472,6 +472,94 @@ section > h2 {
     color: var(--muted);
 }
 
+/* Import panel ------------------------------------------------------------- */
+
+.import-result {
+    display: grid;
+    gap: var(--space-3);
+}
+
+.import-result:empty {
+    display: none;
+}
+
+.import-totals {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--muted);
+}
+
+.import-table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+}
+
+.import-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--text-sm);
+}
+
+.import-table th,
+.import-table td {
+    padding: var(--space-2) var(--space-3);
+    text-align: left;
+    white-space: nowrap;
+}
+
+.import-table td:nth-child(5) {
+    white-space: normal;
+}
+
+.import-table th {
+    color: var(--muted);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border-bottom: 1px solid var(--border);
+}
+
+.import-table tbody tr {
+    border-top: 1px solid var(--border);
+}
+
+.import-table tbody tr:first-child {
+    border-top: none;
+}
+
+.import-table tr[data-status="create"] td:nth-child(4) {
+    color: var(--accent-strong);
+    font-weight: 600;
+}
+
+.import-table tr[data-status="skip"] td:nth-child(4) {
+    color: var(--muted);
+    font-weight: 600;
+}
+
+.import-table tr[data-status="error"] {
+    background: color-mix(in oklch, var(--primary) 8%, transparent);
+}
+
+.import-table tr[data-status="error"] td:nth-child(4) {
+    color: var(--primary-strong);
+    font-weight: 600;
+}
+
+.import-error-note,
+.import-success-note {
+    font-size: var(--text-sm);
+}
+
+.import-error-note {
+    color: var(--primary-strong);
+}
+
+.import-success-note {
+    color: var(--accent-strong);
+}
+
 /* Danger zone -------------------------------------------------------------- */
 
 .danger-zone {
