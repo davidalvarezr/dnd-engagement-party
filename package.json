@@ -4,13 +4,18 @@
     "private": true,
     "packageManager": "pnpm@11.15.1",
     "scripts": {
+        "postinstall": "prisma generate",
         "dev": "next dev",
         "build": "next build",
         "start": "next start",
         "lint": "biome check",
         "format": "biome format --write",
         "format:check": "biome format .",
-        "test": "vitest run"
+        "test": "vitest run",
+        "db:up": "docker compose -f docker-compose.local.yml up -d",
+        "db:migrate": "prisma migrate deploy",
+        "db:seed": "prisma db seed",
+        "db:setup": "pnpm db:up && pnpm db:migrate && pnpm db:seed"
     },
     "dependencies": {
         "@prisma/adapter-pg": "^7.8.0",
