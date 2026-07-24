@@ -35,7 +35,6 @@ services:
     # mounted straight from this host's gitignored working tree.
     volumes:
       - ./prisma/guests-data.ts:/app/prisma/guests-data.ts:ro
-      - ./prisma/fixups.ts:/app/prisma/fixups.ts:ro
 
   db-backup:
     image: prodrigestivill/postgres-backup-local:17-alpine

@@ -92,10 +92,9 @@ cd dnd-engagement-party
 cp .env.prod.example .env
 # fill in real values in .env
 chmod 600 .env
-# real guest data never lives in git or the image - place these two
-# gitignored files here manually (scp from your dev machine)
+# real guest data never lives in git or the image - place this
+# gitignored file here manually (scp from your dev machine)
 #   prisma/guests-data.ts
-#   prisma/fixups.ts
 
 # the image is private - authenticate the NAS's Docker daemon once so
 # both this pull and Watchtower's periodic pulls succeed. Use a GitHub
@@ -103,6 +102,11 @@ chmod 600 .env
 echo "$GITHUB_PAT" | docker login ghcr.io -u <your-github-username> --password-stdin
 
 docker compose up -d
+
+# seed the initial guest list from prisma/guests-data.ts (one-time - the
+# admin app is the source of truth after this, so this does not run
+# automatically on restarts/deploys)
+docker compose exec web node_modules/.bin/tsx prisma/seed.ts
 ```
 
 **Steady state**: nothing to do. A `watchtower` service polls the registry every 5 minutes and automatically pulls + restarts the `web` container when a new `latest` image is published — no manual steps for ordinary releases. Watchtower reuses the Docker daemon's stored `ghcr.io` credentials, so no extra config is needed there.
