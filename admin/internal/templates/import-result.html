@@ -1,0 +1,30 @@
+{{define "import-result"}}{{if .Error}}<p class="form-error">{{.Error}}</p>
+{{else}}<p class="import-totals">{{.Report.Totals.Create}} to create, {{.Report.Totals.Skip}} to skip, {{.Report.Totals.Error}} error(s).</p>
+<div class="import-table-wrap">
+    <table class="import-table">
+        <thead><tr><th>Line</th><th>Guests</th><th>Code</th><th>Status</th><th>Reason</th></tr></thead>
+        <tbody>
+        {{range .Rows}}<tr data-status="{{.Status}}">
+            <td>{{.Line}}</td>
+            <td>{{.Guests}}</td>
+            <td>{{if .Code}}{{.Code}}{{else}}<span class="empty-note">auto</span>{{end}}</td>
+            <td>{{.Status}}</td>
+            <td>{{.Reason}}</td>
+        </tr>
+        {{end}}
+        </tbody>
+    </table>
+</div>
+{{if gt .Report.Totals.Error 0}}<p class="import-error-note">Fix the errors and re-upload &mdash; nothing will be imported.</p>
+{{else}}<form class="form-inline" hx-post="/import/confirm" hx-target="#import-result" hx-swap="innerHTML">
+    <input type="hidden" name="token" value="{{.Token}}" />
+    <button class="btn btn-accent" type="submit">Confirm import</button>
+    <button type="button" class="btn btn-ghost" onclick="document.getElementById('import-result').innerHTML = ''">Cancel</button>
+</form>
+{{end}}
+{{end}}
+{{end}}
+
+{{define "import-success"}}<p class="import-success-note">Imported {{.Report.Created}} invitation(s), {{.Report.Totals.Skip}} skipped.</p>
+{{template "oob-update" .Dashboard}}
+{{end}}
