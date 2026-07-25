@@ -18,12 +18,18 @@
 
 .funPerson {
     display: block;
-    width: 5rem;
     height: auto;
 }
 
-.paragraphs,
-.paragraphsRight {
+.davidGroup {
+    width: 25%;
+}
+
+.danielleGroup {
+    width: 40%;
+}
+
+.paragraphs {
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
@@ -35,40 +41,14 @@
     align-self: flex-end;
 }
 
-.link {
-    text-decoration: underline;
-}
-
 .section {
     display: flex;
     flex-direction: column;
     gap: 1rem;
 }
 
-.scheduleRow {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-}
-
-.leftParagraphs {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    max-width: 75%;
-    text-align: left;
-}
-
 .headingLeft {
     text-align: left;
-}
-
-.lieuHeader {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 1rem;
 }
 
 .fieldset {
@@ -86,6 +66,9 @@
     font-size: 1.1rem;
     color: var(--color-text);
     padding: 0;
+    /* legend is excluded from flex layout even inside a flex fieldset, so
+       .fieldset's gap can't create space after it — margin is the only way */
+    margin: 0 0 1.25rem;
 }
 
 .optionList {

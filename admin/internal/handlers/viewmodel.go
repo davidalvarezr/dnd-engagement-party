@@ -95,15 +95,7 @@ func NewInvitationDetailView(inv client.Invitation, baseURL string) InvitationDe
 
 	guests := make([]GuestDetailView, len(inv.Guests))
 	for i, g := range inv.Guests {
-		label := "Undecided"
-		if g.Participating != nil {
-			if *g.Participating {
-				label = "Attending"
-			} else {
-				label = "Not attending"
-			}
-		}
-		guests[i] = GuestDetailView{Guest: g, StatusLabel: label}
+		guests[i] = GuestDetailView{Guest: g, StatusLabel: guestStatusLabel(g)}
 	}
 
 	activities := make([]string, len(inv.ActivityParticipants))
@@ -112,23 +104,41 @@ func NewInvitationDetailView(inv client.Invitation, baseURL string) InvitationDe
 	}
 	sort.Strings(activities)
 
-	boatLabel := ""
-	if inv.BoatInfo != nil {
-		if inv.BoatInfo.AvailableSpots != nil {
-			boatLabel = fmt.Sprintf("Offering %d boat spot(s)", *inv.BoatInfo.AvailableSpots)
-		} else if inv.BoatInfo.NeededSpots != nil {
-			boatLabel = fmt.Sprintf("Needs %d boat spot(s)", *inv.BoatInfo.NeededSpots)
-		}
-	}
-
 	return InvitationDetailView{
 		Invitation:     inv,
 		RespondedLabel: respondedLabel,
 		Guests:         guests,
 		Activities:     activities,
-		BoatLabel:      boatLabel,
+		BoatLabel:      boatLabel(inv),
 		InviteURL:      inviteURL(baseURL, inv.Code),
 	}
+}
+
+// guestStatusLabel is the display-ready RSVP status for a single guest.
+func guestStatusLabel(g client.Guest) string {
+	switch {
+	case g.Participating == nil:
+		return "Undecided"
+	case *g.Participating:
+		return "Attending"
+	default:
+		return "Not attending"
+	}
+}
+
+// boatLabel is the display-ready boat offer/need for an invitation, or ""
+// if it hasn't answered the boat question.
+func boatLabel(inv client.Invitation) string {
+	if inv.BoatInfo == nil {
+		return ""
+	}
+	if inv.BoatInfo.AvailableSpots != nil {
+		return fmt.Sprintf("Offering %d boat spot(s)", *inv.BoatInfo.AvailableSpots)
+	}
+	if inv.BoatInfo.NeededSpots != nil {
+		return fmt.Sprintf("Needs %d boat spot(s)", *inv.BoatInfo.NeededSpots)
+	}
+	return ""
 }
 
 // SingleOption is one currently-unpaired guest, offered by the "link two

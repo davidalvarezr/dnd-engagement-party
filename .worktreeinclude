@@ -1,5 +1,4 @@
 .envrc
 .env
 admin/.env
-prisma/guests-data.ts
-prisma/fixups.ts
+prisma/invitee-list.csv

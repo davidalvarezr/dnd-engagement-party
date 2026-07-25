@@ -2,6 +2,7 @@
 
 import type { getInvitationByCode } from "@/lib/invitations"
 import typography from "@/styles/typography.module.css"
+import { EventInfo } from "./EventInfo"
 import { InviteShell } from "./InviteShell"
 import styles from "./ReadMode.module.css"
 import { BoatDivider } from "./ui/BoatDivider"
@@ -89,6 +90,8 @@ export function ReadMode({ invitation, onEdit }: Props) {
                         modifier
                     </Button>
                 </div>
+
+                <EventInfo />
             </div>
         </InviteShell>
     )
