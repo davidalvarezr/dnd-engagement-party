@@ -51,6 +51,9 @@ next-env.d.ts
 # postgres backups (contain guest PII, host-local only)
 /backups
 
+# Nix-managed local Postgres data + socket dir (see flake.nix's `db` command)
+/.data/
+
 # git
 /.worktrees
 
