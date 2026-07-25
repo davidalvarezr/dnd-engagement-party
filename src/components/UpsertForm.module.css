@@ -66,6 +66,9 @@
     font-size: 1.1rem;
     color: var(--color-text);
     padding: 0;
+    /* legend is excluded from flex layout even inside a flex fieldset, so
+       .fieldset's gap can't create space after it — margin is the only way */
+    margin: 0 0 1.25rem;
 }
 
 .optionList {
