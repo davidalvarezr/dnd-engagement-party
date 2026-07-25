@@ -93,7 +93,7 @@ func tokenForRows(rows []client.ImportRow) (string, error) {
 
 func renderImportError(w http.ResponseWriter, message string) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	_ = templates.Templates.ExecuteTemplate(w, "import-result", ImportResultView{Error: message})
+	_ = templates.Templates().ExecuteTemplate(w, "import-result", ImportResultView{Error: message})
 }
 
 // ImportPreview parses an uploaded CSV, asks the main app to classify each
@@ -136,7 +136,7 @@ func (s *Server) ImportPreview(w http.ResponseWriter, r *http.Request) {
 	s.pendingMu.Unlock()
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	_ = templates.Templates.ExecuteTemplate(w, "import-result", NewImportResultView(report, token))
+	_ = templates.Templates().ExecuteTemplate(w, "import-result", NewImportResultView(report, token))
 }
 
 // ImportConfirm re-submits the rows behind the previously previewed token
@@ -178,7 +178,7 @@ func (s *Server) ImportConfirm(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	_ = templates.Templates.ExecuteTemplate(w, "import-success", struct {
+	_ = templates.Templates().ExecuteTemplate(w, "import-success", struct {
 		Report    client.ImportReport
 		Dashboard dashboardData
 	}{Report: *report, Dashboard: dashboard})

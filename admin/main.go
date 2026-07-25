@@ -3,7 +3,6 @@
 package main
 
 import (
-	"embed"
 	"log"
 	"net/http"
 
@@ -11,9 +10,6 @@ import (
 	"admin/internal/config"
 	"admin/internal/handlers"
 )
-
-//go:embed static
-var staticFS embed.FS
 
 func main() {
 	cfg, err := config.Load()
@@ -27,7 +23,7 @@ func main() {
 	}
 
 	mux := http.NewServeMux()
-	mux.Handle("GET /static/", http.FileServer(http.FS(staticFS)))
+	mux.Handle("GET /static/", http.FileServer(http.Dir(".")))
 	mux.HandleFunc("GET /{$}", server.Index)
 	mux.HandleFunc("POST /invitees", server.CreateInvitee)
 	mux.HandleFunc("DELETE /invitees/{id}", server.DeleteInvitation)
