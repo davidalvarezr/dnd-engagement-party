@@ -90,7 +90,7 @@ This project is deployed to a self-hosted NAS via Docker, with CI building and p
 ```bash
 git clone <repo-url>
 cd dnd-engagement-party
-cp .env.prod.example .env
+cp .env.example .env
 # fill in real values in .env
 chmod 600 .env
 # real guest data never lives in git or the image - place this
