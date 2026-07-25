@@ -1,6 +1,6 @@
 ---
 name: pr
-description: Create a pull request for the current branch. Use whenever the user asks to open/create a PR.
+description: Create a pull request for the current branch. Use whenever a PR is about to be opened for this repo — whether the user explicitly asks, or you're doing it on your own initiative (e.g. wrapping up isolated worktree/background-job work). Check this skill before any `gh pr create` call, not just user-requested ones.
 model: haiku
 ---
 

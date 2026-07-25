@@ -33,7 +33,6 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 !.env.example
-!.env.prod.example
 
 # vercel
 .vercel
@@ -51,6 +50,9 @@ next-env.d.ts
 # postgres backups (contain guest PII, host-local only)
 /backups
 
+# Nix-managed local Postgres data + socket dir (see flake.nix's `db` command)
+/.data/
+
 # git
 /.worktrees
 
@@ -58,3 +60,4 @@ next-env.d.ts
 /prisma/guests-data.ts
 /docs/diagrams/guest/guest-list.csv
 /prisma/fixups.ts
+/prisma/invitee-list.csv

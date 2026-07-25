@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"sync"
 
 	"admin/internal/client"
 	"admin/internal/templates"
@@ -17,6 +18,13 @@ import (
 type Server struct {
 	Client    *client.Client
 	TargetURL string
+
+	// pendingMu guards the most recently previewed (but not yet confirmed)
+	// CSV import. Only one pending import is tracked at a time; confirming
+	// requires the token to match, so a stale or unknown token is rejected.
+	pendingMu    sync.Mutex
+	pendingRows  []client.ImportRow
+	pendingToken string
 }
 
 type dashboardData struct {
@@ -55,7 +63,7 @@ func (s *Server) Index(w http.ResponseWriter, r *http.Request) {
 	}{dashboardData: dashboard, TargetURL: s.TargetURL}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	if err := templates.Templates.ExecuteTemplate(w, "page", data); err != nil {
+	if err := templates.Templates().ExecuteTemplate(w, "page", data); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
@@ -71,7 +79,7 @@ func (s *Server) renderOOBUpdate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	_ = templates.Templates.ExecuteTemplate(w, "oob-update", dashboard)
+	_ = templates.Templates().ExecuteTemplate(w, "oob-update", dashboard)
 }
 
 func statusMessage(w http.ResponseWriter, message string) {
@@ -177,7 +185,7 @@ func (s *Server) InviteeDetail(w http.ResponseWriter, r *http.Request) {
 	for _, inv := range invitations {
 		if inv.ID == id {
 			w.Header().Set("Content-Type", "text/html; charset=utf-8")
-			_ = templates.Templates.ExecuteTemplate(w, "invitee-detail", NewInvitationDetailView(inv, s.TargetURL))
+			_ = templates.Templates().ExecuteTemplate(w, "invitee-detail", NewInvitationDetailView(inv, s.TargetURL))
 			return
 		}
 	}
@@ -212,7 +220,7 @@ func (s *Server) LinkPreview(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	_ = templates.Templates.ExecuteTemplate(w, "link-result", NewLinkPreviewView(guestIDA, guestIDB, invA, invB, s.TargetURL))
+	_ = templates.Templates().ExecuteTemplate(w, "link-result", NewLinkPreviewView(guestIDA, guestIDB, invA, invB, s.TargetURL))
 }
 
 func (s *Server) LinkConfirm(w http.ResponseWriter, r *http.Request) {

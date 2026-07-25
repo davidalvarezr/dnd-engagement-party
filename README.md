@@ -2,19 +2,20 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-First, run the development server:
+**Prerequisites**: Docker + Docker Compose, [pnpm](https://pnpm.io), and Node (see `package.json` for the version this project targets).
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
+cp .env.example .env
+pnpm db:setup
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- `pnpm db:setup` starts the local Postgres container (`docker-compose.local.yml`), applies migrations, and seeds the database. It's a shortcut for `pnpm db:up && pnpm db:migrate && pnpm db:seed`.
+- **Migrations create tables; seeding fills them.** Running only `prisma migrate deploy` (`pnpm db:migrate`) gives you an empty `Invitation` table — every `/invite/<code>` link will 404 with "You are not invited" until you've also run `pnpm db:seed`.
+- Seeding (`prisma db seed`, wired via the `prisma.seed` field in `package.json`) requires the gitignored `prisma/guests-data.ts`, which contains real guest data and only exists on the maintainer's machines (see the NAS deployment note below for how it's provisioned outside of git). Without it, `pnpm db:seed` will fail to import and there's nothing to seed with.
+
+Once seeded, open [http://localhost:3000](http://localhost:3000) and visit any invite link printed by the seed script (or an existing one from the database), e.g. `http://localhost:3000/invite/<code>`.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
@@ -89,13 +90,12 @@ This project is deployed to a self-hosted NAS via Docker, with CI building and p
 ```bash
 git clone <repo-url>
 cd dnd-engagement-party
-cp .env.prod.example .env
+cp .env.example .env
 # fill in real values in .env
 chmod 600 .env
-# real guest data never lives in git or the image - place these two
-# gitignored files here manually (scp from your dev machine)
+# real guest data never lives in git or the image - place this
+# gitignored file here manually (scp from your dev machine)
 #   prisma/guests-data.ts
-#   prisma/fixups.ts
 
 # the image is private - authenticate the NAS's Docker daemon once so
 # both this pull and Watchtower's periodic pulls succeed. Use a GitHub
@@ -103,6 +103,11 @@ chmod 600 .env
 echo "$GITHUB_PAT" | docker login ghcr.io -u <your-github-username> --password-stdin
 
 docker compose up -d
+
+# seed the initial guest list from prisma/guests-data.ts (one-time - the
+# admin app is the source of truth after this, so this does not run
+# automatically on restarts/deploys)
+docker compose exec web node_modules/.bin/tsx prisma/seed.ts
 ```
 
 **Steady state**: nothing to do. A `watchtower` service polls the registry every 5 minutes and automatically pulls + restarts the `web` container when a new `latest` image is published — no manual steps for ordinary releases. Watchtower reuses the Docker daemon's stored `ghcr.io` credentials, so no extra config is needed there.

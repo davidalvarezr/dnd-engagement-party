@@ -132,6 +132,22 @@ func (c *Client) ResetData(ctx context.Context, confirm string) error {
 	return c.do(ctx, http.MethodPost, "/api/admin/reset", body, nil)
 }
 
+// ImportInvitees posts a batch of CSV rows for classification. When dryRun
+// is true nothing is written; the returned report is a preview. When false,
+// rows classified as "create" are applied, but only if every row is
+// error-free (checked by the endpoint itself).
+func (c *Client) ImportInvitees(ctx context.Context, rows []ImportRow, dryRun bool) (*ImportReport, error) {
+	var report ImportReport
+	body := map[string]any{
+		"dryRun": dryRun,
+		"rows":   rows,
+	}
+	if err := c.do(ctx, http.MethodPost, "/api/admin/invitations/import", body, &report); err != nil {
+		return nil, err
+	}
+	return &report, nil
+}
+
 func (c *Client) Stats(ctx context.Context) (*Stats, error) {
 	var stats Stats
 	if err := c.do(ctx, http.MethodGet, "/api/admin/stats", nil, &stats); err != nil {
