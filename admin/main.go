@@ -37,6 +37,7 @@ func main() {
 	mux.HandleFunc("POST /link/confirm", server.LinkConfirm)
 	mux.HandleFunc("POST /import/preview", server.ImportPreview)
 	mux.HandleFunc("POST /import/confirm", server.ImportConfirm)
+	mux.HandleFunc("GET /export", server.Export)
 	mux.HandleFunc("POST /reset", server.ResetData)
 
 	log.Printf("admin app listening on :%s (target %s)", cfg.Port, cfg.TargetURL)

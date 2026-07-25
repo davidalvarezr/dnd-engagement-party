@@ -1,7 +1,10 @@
 {{define "invitee-list"}}<section id="invitee-list" aria-label="Invitees">{{template "invitee-list-inner" .}}</section>
 {{end}}
 
-{{define "invitee-list-inner"}}<h2>Invitees</h2>
+{{define "invitee-list-inner"}}<div class="section-header">
+    <h2>Invitees</h2>
+    <a class="btn btn-ghost" href="/export" download>Export CSV</a>
+</div>
 <div class="invitee-list">
     {{range $inv := .}}<details class="invitee-row" hx-get="/fragments/invitees/{{$inv.ID}}" hx-trigger="toggle once"
              hx-target="find .invitee-detail" hx-swap="innerHTML">
