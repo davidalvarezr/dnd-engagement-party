@@ -38,10 +38,15 @@ func (s *Server) Export(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/csv; charset=utf-8")
 	w.Header().Set("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, filename))
 
+	writeCSVResponse(w, invitations)
+}
+
+func writeCSVResponse(w http.ResponseWriter, invitations []client.Invitation) {
 	writer := csv.NewWriter(w)
+	defer writer.Flush()
+
 	_ = writer.Write(exportHeader)
 	for _, inv := range invitations {
 		_ = writer.Write(exportRow(inv))
 	}
-	writer.Flush()
 }
