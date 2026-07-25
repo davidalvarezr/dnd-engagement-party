@@ -14,7 +14,7 @@
                     {{range $i, $g := $inv.Guests}}{{if $i}}<span class="and">&amp;</span>{{end}}<strong>{{$g.Name}}</strong>{{if gt (len $inv.Guests) 1}} <button type="button" class="btn btn-ghost"
                         onclick="event.preventDefault()"
                         hx-delete="/guests/{{$g.ID}}" hx-confirm="Remove {{$g.Name}} from this invite?"
-                        hx-target="#page-status" hx-swap="innerHTML">Remove</button>{{end}}{{end}}
+                        hx-target="#page-status" hx-swap="innerHTML" hx-disabled-elt="this"><span class="spinner" aria-hidden="true"></span>Remove</button>{{end}}{{end}}
                 </span>
                 <span class="badge" data-status="{{$inv.StatusKey}}">{{$inv.StatusLabel}}</span>
                 <span class="row-toggle" aria-hidden="true">Details</span>
@@ -22,7 +22,8 @@
                         onclick="event.preventDefault()"
                         hx-delete="/invitees/{{$inv.ID}}"
                         hx-confirm="Delete {{$inv.Names}}? This can't be undone."
-                        hx-target="#page-status" hx-swap="innerHTML">
+                        hx-target="#page-status" hx-swap="innerHTML" hx-disabled-elt="this">
+                    <span class="spinner" aria-hidden="true"></span>
                     {{if gt (len $inv.Guests) 1}}Delete couple{{else}}Delete{{end}}
                 </button>
             </div>
