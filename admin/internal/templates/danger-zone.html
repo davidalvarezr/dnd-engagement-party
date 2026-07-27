@@ -7,6 +7,13 @@
         </div>
         <button type="button" class="btn btn-danger" onclick="document.getElementById('danger-zone-dialog').showModal()">Reset all RSVP data&hellip;</button>
     </div>
+    <div class="danger-zone-row">
+        <div class="danger-zone-copy">
+            <strong>Remove all invitees</strong>
+            <p>Permanently deletes every invitee, guest, and their RSVP data. The invite list is left empty. This can&rsquo;t be undone.</p>
+        </div>
+        <button type="button" class="btn btn-danger" onclick="document.getElementById('danger-zone-delete-all-dialog').showModal()">Remove all invitees&hellip;</button>
+    </div>
 </section>
 
 <dialog id="danger-zone-dialog" class="danger-zone-dialog">
@@ -22,6 +29,23 @@
         <div class="danger-zone-actions">
             <button type="button" class="btn btn-ghost" onclick="this.form.reset(); this.form.querySelector('button[type=submit]').disabled = true; document.getElementById('danger-zone-dialog').close()">Cancel</button>
             <button type="submit" class="btn btn-danger" disabled>Reset all RSVP data</button>
+        </div>
+    </form>
+</dialog>
+
+<dialog id="danger-zone-delete-all-dialog" class="danger-zone-dialog">
+    <form class="danger-zone-form" hx-post="/invitees/delete-all" hx-target="#page-status" hx-swap="innerHTML"
+          hx-on::after-request="document.getElementById('danger-zone-delete-all-dialog').close(); this.reset(); this.querySelector('button[type=submit]').disabled = true">
+        <h3>Remove all invitees?</h3>
+        <p>This permanently deletes <strong>every</strong> invitee, guest, and their RSVP data. There is no undo.</p>
+        <div class="field">
+            <label for="danger-zone-delete-all-confirm">Type <code>DELETE ALL INVITEES</code> to confirm</label>
+            <input id="danger-zone-delete-all-confirm" name="confirm" type="text" autocomplete="off" autocapitalize="off" spellcheck="false"
+                   oninput="this.form.querySelector('button[type=submit]').disabled = this.value !== 'DELETE ALL INVITEES'" />
+        </div>
+        <div class="danger-zone-actions">
+            <button type="button" class="btn btn-ghost" onclick="this.form.reset(); this.form.querySelector('button[type=submit]').disabled = true; document.getElementById('danger-zone-delete-all-dialog').close()">Cancel</button>
+            <button type="submit" class="btn btn-danger" disabled>Remove all invitees</button>
         </div>
     </form>
 </dialog>

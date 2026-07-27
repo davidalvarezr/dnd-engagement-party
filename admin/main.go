@@ -35,6 +35,7 @@ func main() {
 	mux.HandleFunc("POST /import/confirm", server.ImportConfirm)
 	mux.HandleFunc("GET /export", server.Export)
 	mux.HandleFunc("POST /reset", server.ResetData)
+	mux.HandleFunc("POST /invitees/delete-all", server.DeleteAllInvitees)
 
 	log.Printf("admin app listening on :%s (target %s)", cfg.Port, cfg.TargetURL)
 	log.Fatal(http.ListenAndServe(":"+cfg.Port, mux))

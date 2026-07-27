@@ -71,6 +71,27 @@ func TestResetDataSendsConfirmationPhrase(t *testing.T) {
 	}
 }
 
+func TestDeleteAllInvitationsSendsConfirmationPhrase(t *testing.T) {
+	var gotBody map[string]string
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodDelete || r.URL.Path != "/api/admin/invitations" {
+			t.Errorf("request = %s %s, want DELETE /api/admin/invitations", r.Method, r.URL.Path)
+		}
+		_ = json.NewDecoder(r.Body).Decode(&gotBody)
+		w.WriteHeader(http.StatusNoContent)
+	}))
+	defer server.Close()
+
+	c := New(server.URL, "secret")
+	if err := c.DeleteAllInvitations(context.Background(), "DELETE ALL INVITEES"); err != nil {
+		t.Fatalf("DeleteAllInvitations() error = %v", err)
+	}
+
+	if gotBody["confirm"] != "DELETE ALL INVITEES" {
+		t.Errorf("request body = %+v, want confirm = DELETE ALL INVITEES", gotBody)
+	}
+}
+
 func TestLinkGuestsOmitsKeepAnswersFromWhenEmpty(t *testing.T) {
 	var body map[string]any
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

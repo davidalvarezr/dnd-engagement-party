@@ -132,6 +132,13 @@ func (c *Client) ResetData(ctx context.Context, confirm string) error {
 	return c.do(ctx, http.MethodPost, "/api/admin/reset", body, nil)
 }
 
+// DeleteAllInvitations permanently removes every invitee, guest, and their
+// RSVP data. confirm must match the main app's confirmation phrase exactly.
+func (c *Client) DeleteAllInvitations(ctx context.Context, confirm string) error {
+	body := map[string]string{"confirm": confirm}
+	return c.do(ctx, http.MethodDelete, "/api/admin/invitations", body, nil)
+}
+
 // ImportInvitees posts a batch of CSV rows for classification. When dryRun
 // is true nothing is written; the returned report is a preview. When false,
 // rows classified as "create" are applied, but only if every row is
