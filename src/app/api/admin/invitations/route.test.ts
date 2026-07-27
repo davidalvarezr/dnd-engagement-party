@@ -121,7 +121,9 @@ describe("/api/admin/invitations", () => {
         })
 
         it("rejects a request whose confirmation text doesn't match", async () => {
-            const response = await DELETE(makeDeleteRequest({ confirm: "nope" }))
+            const response = await DELETE(
+                makeDeleteRequest({ confirm: "nope" }),
+            )
 
             expect(response.status).toBe(400)
             expect(prisma.$transaction).not.toHaveBeenCalled()
@@ -136,9 +138,9 @@ describe("/api/admin/invitations", () => {
 
             expect(response.status).toBe(204)
             expect(prisma.$transaction).toHaveBeenCalledTimes(1)
-            expect(prisma.activityParticipation.deleteMany).toHaveBeenCalledWith(
-                {},
-            )
+            expect(
+                prisma.activityParticipation.deleteMany,
+            ).toHaveBeenCalledWith({})
             expect(prisma.boatInfo.deleteMany).toHaveBeenCalledWith({})
             expect(prisma.guest.deleteMany).toHaveBeenCalledWith({})
             expect(prisma.invitation.deleteMany).toHaveBeenCalledWith({})
