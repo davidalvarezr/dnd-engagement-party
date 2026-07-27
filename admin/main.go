@@ -34,6 +34,7 @@ func main() {
 	mux.HandleFunc("POST /import/preview", server.ImportPreview)
 	mux.HandleFunc("POST /import/confirm", server.ImportConfirm)
 	mux.HandleFunc("GET /export", server.Export)
+	mux.HandleFunc("GET /invitees/copy", server.CopyList)
 	mux.HandleFunc("POST /reset", server.ResetData)
 	mux.HandleFunc("POST /invitees/delete-all", server.DeleteAllInvitees)
 

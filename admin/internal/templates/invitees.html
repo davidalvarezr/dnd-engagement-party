@@ -3,7 +3,10 @@
 
 {{define "invitee-list-inner"}}<div class="section-header">
     <h2>Invitees</h2>
-    <a class="btn btn-ghost" href="/export" download>Export CSV</a>
+    <div class="section-header-actions">
+        <button type="button" class="btn btn-ghost" onclick="copyInviteList(this)">Copy all invites</button>
+        <a class="btn btn-ghost" href="/export" download>Export CSV</a>
+    </div>
 </div>
 <div class="invitee-list">
     {{range $inv := .}}<details class="invitee-row" hx-get="/fragments/invitees/{{$inv.ID}}" hx-trigger="toggle once"
