@@ -160,7 +160,7 @@ export function UpsertForm({
                             Les infos ainsi que la questionnaire pour
                             l’organisation se trouvent ci-dessous,{" "}
                             <strong>veuillez compléter au plus vite</strong>{" "}
-                            pour s’assurer d’avoir une place dans un bâteau :)
+                            pour s’assurer d’avoir une place dans un bateau :)
                         </p>
                     </div>
                 </div>
@@ -282,7 +282,7 @@ export function UpsertForm({
                     {someoneAttending && descente && (
                         <fieldset className={styles.fieldset}>
                             <legend className={styles.legend}>
-                                As-tu un bâteau ?
+                                As-tu un bateau ?
                             </legend>
                             <div className={styles.optionList}>
                                 <Radio
@@ -290,14 +290,14 @@ export function UpsertForm({
                                     value="has_boat"
                                     checked={boatChoice === "has_boat"}
                                     onChange={() => setBoatChoice("has_boat")}
-                                    label="J’ai un/des bâteau(x) gonflable(s)"
+                                    label="J’ai un/des bateau(x) gonflable(s)"
                                 />
                                 <Radio
                                     name="boat"
                                     value="needs_spot"
                                     checked={boatChoice === "needs_spot"}
                                     onChange={() => setBoatChoice("needs_spot")}
-                                    label="J’ai besoin d’une/plusieurs place(s) dans un bâteau gonflable"
+                                    label="J’ai besoin d’une/plusieurs place(s) dans un bateau gonflable"
                                 />
                             </div>
                         </fieldset>
@@ -309,7 +309,7 @@ export function UpsertForm({
                         boatChoice === "has_boat" && (
                             <fieldset className={styles.fieldset}>
                                 <legend className={styles.legend}>
-                                    Combien de places sont dispo dans ton bâteau
+                                    Combien de places sont dispo dans ton bateau
                                     ?
                                 </legend>
                                 <NumberInput
@@ -328,7 +328,7 @@ export function UpsertForm({
                             <fieldset className={styles.fieldset}>
                                 <legend className={styles.legend}>
                                     Combien de places as-tu besoin dans un
-                                    bâteau ?
+                                    bateau ?
                                 </legend>
                                 <NumberInput
                                     value={neededSpots}
