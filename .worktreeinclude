@@ -1,4 +1,3 @@
 .envrc
 .env
 admin/.env
-prisma/invitee-list.csv

@@ -2,20 +2,37 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-**Prerequisites**: Docker + Docker Compose, [pnpm](https://pnpm.io), and Node (see `package.json` for the version this project targets).
+**Prerequisites**: [Nix](https://nixos.org) (for the dev shell and Nix-managed local Postgres), [pnpm](https://pnpm.io), and Node (see `package.json` for the version this project targets). If you use [direnv](https://direnv.net), the checked-in `.envrc` auto-loads the Nix dev shell on `cd`.
 
 ```bash
+nix develop
 pnpm install
-cp .env.example .env
+cp .env.example .env.development.local
 pnpm db:setup
 pnpm dev
 ```
 
-- `pnpm db:setup` starts the local Postgres container (`docker-compose.local.yml`), applies migrations, and seeds the database. It's a shortcut for `pnpm db:up && pnpm db:migrate && pnpm db:seed`.
-- **Migrations create tables; seeding fills them.** Running only `prisma migrate deploy` (`pnpm db:migrate`) gives you an empty `Invitation` table — every `/invite/<code>` link will 404 with "You are not invited" until you've also run `pnpm db:seed`.
-- Seeding (`prisma db seed`, wired via the `prisma.seed` field in `package.json`) requires the gitignored `prisma/guests-data.ts`, which contains real guest data and only exists on the maintainer's machines (see the NAS deployment note below for how it's provisioned outside of git). Without it, `pnpm db:seed` will fail to import and there's nothing to seed with.
+Or just run `run` from inside the Nix dev shell, which does `db`, `pnpm install`, and `pnpm dev` in one step.
 
-Once seeded, open [http://localhost:3000](http://localhost:3000) and visit any invite link printed by the seed script (or an existing one from the database), e.g. `http://localhost:3000/invite/<code>`.
+- `pnpm db:setup` starts the local Postgres cluster (Nix-managed, data in `.data/postgres` — see `flake.nix`) and applies migrations. It's a shortcut for `pnpm db:up && pnpm db:migrate`. `db-stop` stops it; `db-fg` runs it in the foreground.
+
+**Nix dev shell commands** (also printed on `nix develop`, see `flake.nix`):
+
+| Command | What it does |
+| --- | --- |
+| `db` | Start the local Postgres in the background |
+| `db-fg` | Start the local Postgres in the foreground (Ctrl+C to stop, no `db-stop` needed) |
+| `db-stop` | Stop the backgrounded local Postgres |
+| `migrate` | Start Postgres and apply pending Prisma migrations |
+| `run` | Run the main app (`pnpm dev`) |
+| `run-admin` | Run the admin app (`go run`) |
+| `run-admin-prod` | Run the prod admin app (`go run`) |
+| `format` | Format both apps (biome + gofmt) |
+| `check` | Run every check both apps run in CI |
+
+- **Migrations create tables; they don't add guests.** Running `prisma migrate deploy` (`pnpm db:migrate`) gives you an empty `Invitation` table — every `/invite/<code>` link will 404 with "You are not invited" until you add guests via the admin app's CSV import (see `docs/invitee-list.example.csv` for the format).
+
+Once you've imported guests, open [http://localhost:3000](http://localhost:3000) and visit an invite link, e.g. `http://localhost:3000/invite/<code>`.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
@@ -28,7 +45,9 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 - `pnpm format:check` — check formatting without writing changes (used in CI)
 - `pnpm lint` — lint with Biome
 
-CI (`.github/workflows/release.yml`) runs formatting, linting, tests, and a production build before a new version is tagged and a Docker image is published — a push to `main` that fails any of these never reaches the registry.
+From inside the Nix dev shell, `format` and `check` run the equivalent commands for **both** apps in one step — `format` runs `pnpm format` and `gofmt -w` on `admin/`; `check` runs everything CI runs (formatting, lint, tests, build) for the main app and the admin app.
+
+**CI**: every pull request into `develop` or `main` runs `.github/workflows/ci.yml` (path-filtered to skip the main app's checks for admin-only or docs-only changes) and `.github/workflows/ci-admin.yml` (only for changes under `admin/`) — both run the same formatting/lint/test/build checks `check` runs locally. Pull requests into `main` additionally run `.github/workflows/branch-policy.yml`, which only allows `develop` or a `hotfix/*` branch as the merge source; `main` has branch protection requiring all of these checks to pass before merging. On push to `main`, `.github/workflows/release.yml` re-verifies the main app, computes the next semver tag from conventional commits, and publishes the Docker image — a push that fails verification never reaches the registry.
 
 To run the same formatting/lint checks locally before every commit, enable the checked-in pre-commit hook once:
 
@@ -38,17 +57,18 @@ git config core.hooksPath .githooks
 
 ## Admin app
 
-`admin/` is a small, separate Go + HTMX app for managing the guest list day to day (view invitees, add/delete people, pair couples, see RSVP stats). It runs locally only — never deployed — and talks to this app's `/api/admin/*` endpoints over HTTP, authenticated with a shared `API_KEY` (`X-Api-Key` header). Set `API_KEY` in this app's `.env` for the endpoints to work.
+`admin/` is a small, separate Go + HTMX app for managing the guest list day to day (view invitees, add/delete people, pair couples, see RSVP stats). It runs locally only — never deployed — and talks to this app's `/api/admin/*` endpoints over HTTP, authenticated with a shared `API_KEY` (`X-Api-Key` header). Set `API_KEY` in the main app's env file (`.env.development.local` locally, `.env` in production) for the endpoints to work.
 
-To run it:
+To run it, from inside the Nix dev shell:
 
 ```bash
-cd admin
-cp .env.example .env
+cp admin/.env.example admin/.env.development.local
 # fill in API_KEY (must match this app's API_KEY) and TARGET_URL
 # (http://localhost:3000 for local dev, or your live URL)
-go run .
+run-admin
 ```
+
+`run-admin` (runnable from anywhere in the repo) sources `admin/.env.development.local` and runs `go run .` for you — the admin binary itself only reads plain environment variables, so a bare `go run .` without sourcing that file first will fail with "API_KEY is required".
 
 Then open `http://localhost:4100` (or whatever `PORT` you set).
 
@@ -93,9 +113,6 @@ cd dnd-engagement-party
 cp .env.example .env
 # fill in real values in .env
 chmod 600 .env
-# real guest data never lives in git or the image - place this
-# gitignored file here manually (scp from your dev machine)
-#   prisma/guests-data.ts
 
 # the image is private - authenticate the NAS's Docker daemon once so
 # both this pull and Watchtower's periodic pulls succeed. Use a GitHub
@@ -104,10 +121,9 @@ echo "$GITHUB_PAT" | docker login ghcr.io -u <your-github-username> --password-s
 
 docker compose up -d
 
-# seed the initial guest list from prisma/guests-data.ts (one-time - the
-# admin app is the source of truth after this, so this does not run
+# load the initial guest list via the admin app's CSV import (one-time -
+# the admin app is the source of truth after this, so this does not run
 # automatically on restarts/deploys)
-docker compose exec web node_modules/.bin/tsx prisma/seed.ts
 ```
 
 **Steady state**: nothing to do. A `watchtower` service polls the registry every 5 minutes and automatically pulls + restarts the `web` container when a new `latest` image is published — no manual steps for ordinary releases. Watchtower reuses the Docker daemon's stored `ghcr.io` credentials, so no extra config is needed there.

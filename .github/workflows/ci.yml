@@ -5,6 +5,20 @@ on:
     branches:
       - develop
       - main
+    paths-ignore:
+      - "admin/**"
+      - "docs/**"
+      - "README.md"
+      - "flake.nix"
+      - "flake.lock"
+      - ".envrc"
+      - ".githooks/**"
+      - ".github/workflows/ci-admin.yml"
+      - ".github/workflows/verify-admin.yml"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   verify:
