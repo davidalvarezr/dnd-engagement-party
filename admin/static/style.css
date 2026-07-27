@@ -159,6 +159,19 @@ section > h2 {
     font-weight: 600;
 }
 
+.section-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+}
+
+.section-header > h2 {
+    font-size: var(--text-lg);
+    font-weight: 600;
+}
+
 /* Stats ------------------------------------------------------------------ */
 
 .stat-grid {
@@ -357,6 +370,26 @@ section > h2 {
 .btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+}
+
+.spinner {
+    display: none;
+    width: 0.9em;
+    height: 0.9em;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+}
+
+.btn.htmx-request .spinner {
+    display: inline-block;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .btn-accent {

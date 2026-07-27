@@ -1,6 +1,6 @@
 "use client"
 
-import { useOptimistic, useState } from "react"
+import { useState, useTransition } from "react"
 import type { getInvitationByCode } from "@/lib/invitations"
 import { ReadMode } from "./ReadMode"
 import { type SubmitPayload, UpsertForm } from "./UpsertForm"
@@ -13,29 +13,29 @@ type Props = {
 
 export function InviteForm({ invitation: initial }: Props) {
     const [invitation, setInvitation] = useState(initial)
-    const [optimisticInvitation, setOptimistic] = useOptimistic(invitation)
     const [isEditing, setIsEditing] = useState(false)
+    const [isPending, startTransition] = useTransition()
 
-    async function handleSubmit(data: SubmitPayload) {
-        setOptimistic({ ...invitation, respondedAt: new Date() })
-        setIsEditing(false)
-
-        const response = await fetch(
-            `/api/invitations/${invitation.code}/response`,
-            {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data),
-            },
-        )
-        const updated = await response.json()
-        setInvitation(updated)
+    function handleSubmit(data: SubmitPayload) {
+        startTransition(async () => {
+            const response = await fetch(
+                `/api/invitations/${invitation.code}/response`,
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data),
+                },
+            )
+            const updated = await response.json()
+            setInvitation(updated)
+            setIsEditing(false)
+        })
     }
 
-    if (optimisticInvitation.respondedAt && !isEditing) {
+    if (invitation.respondedAt && !isEditing) {
         return (
             <ReadMode
-                invitation={optimisticInvitation}
+                invitation={invitation}
                 onEdit={() => setIsEditing(true)}
             />
         )
@@ -45,6 +45,7 @@ export function InviteForm({ invitation: initial }: Props) {
         <UpsertForm
             invitation={invitation}
             onSubmit={handleSubmit}
+            isPending={isPending}
             onCancel={
                 invitation.respondedAt ? () => setIsEditing(false) : undefined
             }
