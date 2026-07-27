@@ -134,7 +134,7 @@
         set -euo pipefail
         cd "$(git rev-parse --show-toplevel)"
         if [ ! -f .env.development.local ]; then
-          echo ".env.development.local not found - run: cp .env.development.local.example .env.development.local, then fill it in" >&2
+          echo ".env.development.local not found - run: cp .env.example .env.development.local, then fill it in" >&2
           exit 1
         fi
         db

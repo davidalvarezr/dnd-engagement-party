@@ -2,12 +2,12 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-**Prerequisites**: [Nix](https://nixos.org) (for the dev shell and Nix-managed local Postgres), [pnpm](https://pnpm.io), and Node (see `package.json` for the version this project targets).
+**Prerequisites**: [Nix](https://nixos.org) (for the dev shell and Nix-managed local Postgres), [pnpm](https://pnpm.io), and Node (see `package.json` for the version this project targets). If you use [direnv](https://direnv.net), the checked-in `.envrc` auto-loads the Nix dev shell on `cd`.
 
 ```bash
 nix develop
 pnpm install
-cp .env.example .env
+cp .env.example .env.development.local
 pnpm db:setup
 pnpm dev
 ```
@@ -31,7 +31,9 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 - `pnpm format:check` — check formatting without writing changes (used in CI)
 - `pnpm lint` — lint with Biome
 
-CI (`.github/workflows/release.yml`) runs formatting, linting, tests, and a production build before a new version is tagged and a Docker image is published — a push to `main` that fails any of these never reaches the registry.
+From inside the Nix dev shell, `format` and `check` run the equivalent commands for **both** apps in one step — `format` runs `pnpm format` and `gofmt -w` on `admin/`; `check` runs everything CI runs (formatting, lint, tests, build) for the main app and the admin app.
+
+**CI**: every pull request into `develop` or `main` runs `.github/workflows/ci.yml` (path-filtered to skip the main app's checks for admin-only or docs-only changes) and `.github/workflows/ci-admin.yml` (only for changes under `admin/`) — both run the same formatting/lint/test/build checks `check` runs locally. Pull requests into `main` additionally run `.github/workflows/branch-policy.yml`, which only allows `develop` or a `hotfix/*` branch as the merge source; `main` has branch protection requiring all of these checks to pass before merging. On push to `main`, `.github/workflows/release.yml` re-verifies the main app, computes the next semver tag from conventional commits, and publishes the Docker image — a push that fails verification never reaches the registry.
 
 To run the same formatting/lint checks locally before every commit, enable the checked-in pre-commit hook once:
 
@@ -41,17 +43,18 @@ git config core.hooksPath .githooks
 
 ## Admin app
 
-`admin/` is a small, separate Go + HTMX app for managing the guest list day to day (view invitees, add/delete people, pair couples, see RSVP stats). It runs locally only — never deployed — and talks to this app's `/api/admin/*` endpoints over HTTP, authenticated with a shared `API_KEY` (`X-Api-Key` header). Set `API_KEY` in this app's `.env` for the endpoints to work.
+`admin/` is a small, separate Go + HTMX app for managing the guest list day to day (view invitees, add/delete people, pair couples, see RSVP stats). It runs locally only — never deployed — and talks to this app's `/api/admin/*` endpoints over HTTP, authenticated with a shared `API_KEY` (`X-Api-Key` header). Set `API_KEY` in the main app's env file (`.env.development.local` locally, `.env` in production) for the endpoints to work.
 
-To run it:
+To run it, from inside the Nix dev shell:
 
 ```bash
-cd admin
-cp .env.example .env
+cp admin/.env.example admin/.env.development.local
 # fill in API_KEY (must match this app's API_KEY) and TARGET_URL
 # (http://localhost:3000 for local dev, or your live URL)
-go run .
+run-admin
 ```
+
+`run-admin` (runnable from anywhere in the repo) sources `admin/.env.development.local` and runs `go run .` for you — the admin binary itself only reads plain environment variables, so a bare `go run .` without sourcing that file first will fail with "API_KEY is required".
 
 Then open `http://localhost:4100` (or whatever `PORT` you set).
 
