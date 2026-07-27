@@ -2,16 +2,19 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-**Prerequisites**: Docker + Docker Compose, [pnpm](https://pnpm.io), and Node (see `package.json` for the version this project targets).
+**Prerequisites**: [Nix](https://nixos.org) (for the dev shell and Nix-managed local Postgres), [pnpm](https://pnpm.io), and Node (see `package.json` for the version this project targets).
 
 ```bash
+nix develop
 pnpm install
 cp .env.example .env
 pnpm db:setup
 pnpm dev
 ```
 
-- `pnpm db:setup` starts the local Postgres container (`docker-compose.local.yml`), applies migrations, and seeds the database. It's a shortcut for `pnpm db:up && pnpm db:migrate && pnpm db:seed`.
+Or just run `run` from inside the Nix dev shell, which does `db`, `pnpm install`, and `pnpm dev` in one step.
+
+- `pnpm db:setup` starts the local Postgres cluster (Nix-managed, data in `.data/postgres` — see `flake.nix`), applies migrations, and seeds the database. It's a shortcut for `pnpm db:up && pnpm db:migrate && pnpm db:seed`. `db-stop` stops it; `db-fg` runs it in the foreground.
 - **Migrations create tables; seeding fills them.** Running only `prisma migrate deploy` (`pnpm db:migrate`) gives you an empty `Invitation` table — every `/invite/<code>` link will 404 with "You are not invited" until you've also run `pnpm db:seed`.
 - Seeding (`prisma db seed`, wired via the `prisma.seed` field in `package.json`) requires the gitignored `prisma/guests-data.ts`, which contains real guest data and only exists on the maintainer's machines (see the NAS deployment note below for how it's provisioned outside of git). Without it, `pnpm db:seed` will fail to import and there's nothing to seed with.
 

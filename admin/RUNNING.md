@@ -22,16 +22,16 @@ This points the admin app at your local dev copy of the main app and its
 local Postgres, so nothing you do can touch real data.
 
 1. Start the main app's local database and the app itself, from the repo
-   root:
+   root (inside the Nix dev shell — `nix develop`):
 
    ```bash
-   docker compose -f docker-compose.local.yml up -d
    cp .env.example .env   # if you haven't already; fill in a local API_KEY
-   pnpm install
-   pnpm dev
+   run
    ```
 
-   The main app should now be serving on `http://localhost:3000`.
+   `run` starts the Nix-managed local Postgres (`db`), then `pnpm install`
+   and `pnpm dev`. The main app should now be serving on
+   `http://localhost:3000`.
 
 2. In a second terminal, configure and run the admin app:
 
