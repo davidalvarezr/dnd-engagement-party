@@ -168,6 +168,21 @@
         go run .
       '';
 
+      format = pkgs.writeShellScriptBin "format" ''
+        set -euo pipefail
+        repo_root="$(git rev-parse --show-toplevel)"
+
+        echo "==> Main app"
+        cd "$repo_root"
+        pnpm format
+
+        echo "==> Admin app"
+        cd "$repo_root/admin"
+        gofmt -w .
+
+        echo "All apps formatted."
+      '';
+
       check = pkgs.writeShellScriptBin "check" ''
         set -euo pipefail
         repo_root="$(git rev-parse --show-toplevel)"
@@ -193,7 +208,7 @@
     in
     {
       devShells.${system}.default = pkgs.mkShell {
-        buildInputs = [ pkgs.nodejs_22 pkgs.pnpm pkgs.go postgresql db db-fg db-stop migrate run run-admin run-admin-prod check ];
+        buildInputs = [ pkgs.nodejs_22 pkgs.pnpm pkgs.go postgresql db db-fg db-stop migrate run run-admin run-admin-prod format check ];
 
         shellHook = ''
           echo ""
@@ -205,6 +220,7 @@
           echo "  run             run the main app (pnpm dev)"
           echo "  run-admin       run the admin app (go run)"
           echo "  run-admin-prod  run the prod admin app (go run)"
+          echo "  format          format both apps (biome + gofmt)"
           echo "  check           run every check both apps run in CI"
           echo ""
         '';
