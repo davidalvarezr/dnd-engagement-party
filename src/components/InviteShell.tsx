@@ -21,7 +21,7 @@ export function InviteShell({ children }: Props) {
                 />
                 <div className={styles.title}>
                     <h1 className={styles.h1}>d &amp; d</h1>
-                    <h2 className={styles.h2}>fête de fiançialles</h2>
+                    <h2 className={styles.h2}>fête de fiançailles</h2>
                 </div>
             </header>
 
