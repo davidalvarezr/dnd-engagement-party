@@ -157,7 +157,7 @@ export function UpsertForm({
                             </strong>
                         </p>
                         <p className={typography.p}>
-                            Les infos ainsi que la questionnaire pour
+                            Les infos ainsi que le questionnaire pour
                             l’organisation se trouvent ci-dessous,{" "}
                             <strong>veuillez compléter au plus vite</strong>{" "}
                             pour s’assurer d’avoir une place dans un bateau :)
