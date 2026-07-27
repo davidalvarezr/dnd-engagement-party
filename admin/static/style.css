@@ -233,16 +233,19 @@ section > h2 {
 }
 
 .invitee-row {
-    display: grid;
-    grid-template-columns: 1fr auto auto auto;
-    align-items: center;
-    gap: var(--space-4);
     padding: var(--space-3) var(--space-4);
     border-top: 1px solid var(--border);
 }
 
 .invitee-row:first-child {
     border-top: none;
+}
+
+.invitee-row-header {
+    display: grid;
+    grid-template-columns: 1fr auto auto auto;
+    align-items: center;
+    gap: var(--space-4);
 }
 
 .invitee-names {
@@ -291,10 +294,9 @@ section > h2 {
 }
 
 .invitee-detail {
-    grid-column: 1 / -1;
     padding: var(--space-4);
     margin: 0 calc(var(--space-4) * -1) calc(var(--space-3) * -1);
-    background: var(--surface);
+    background: red; /* TEMP: confirm CSS reload */
     border-top: 1px solid var(--border);
     display: grid;
     gap: var(--space-3);

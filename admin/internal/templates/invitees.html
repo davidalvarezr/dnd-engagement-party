@@ -5,22 +5,24 @@
 <div class="invitee-list">
     {{range $inv := .}}<details class="invitee-row" hx-get="/fragments/invitees/{{$inv.ID}}" hx-trigger="toggle once"
              hx-target="find .invitee-detail" hx-swap="innerHTML">
-        <summary style="display:contents; cursor:pointer; list-style:none;">
-            <span class="invitee-names">
-                {{range $i, $g := $inv.Guests}}{{if $i}}<span class="and">&amp;</span>{{end}}<strong>{{$g.Name}}</strong>{{if gt (len $inv.Guests) 1}} <button type="button" class="btn btn-ghost"
-                    onclick="event.preventDefault()"
-                    hx-delete="/guests/{{$g.ID}}" hx-confirm="Remove {{$g.Name}} from this invite?"
-                    hx-target="#page-status" hx-swap="innerHTML">Remove</button>{{end}}{{end}}
-            </span>
-            <span class="badge" data-status="{{$inv.StatusKey}}">{{$inv.StatusLabel}}</span>
-            <span class="row-toggle" aria-hidden="true">Details</span>
-            <button type="button" class="btn btn-danger"
-                    onclick="event.preventDefault()"
-                    hx-delete="/invitees/{{$inv.ID}}"
-                    hx-confirm="Delete {{$inv.Names}}? This can't be undone."
-                    hx-target="#page-status" hx-swap="innerHTML">
-                {{if gt (len $inv.Guests) 1}}Delete couple{{else}}Delete{{end}}
-            </button>
+        <summary style="cursor:pointer; list-style:none;">
+            <div class="invitee-row-header">
+                <span class="invitee-names">
+                    {{range $i, $g := $inv.Guests}}{{if $i}}<span class="and">&amp;</span>{{end}}<strong>{{$g.Name}}</strong>{{if gt (len $inv.Guests) 1}} <button type="button" class="btn btn-ghost"
+                        onclick="event.preventDefault()"
+                        hx-delete="/guests/{{$g.ID}}" hx-confirm="Remove {{$g.Name}} from this invite?"
+                        hx-target="#page-status" hx-swap="innerHTML">Remove</button>{{end}}{{end}}
+                </span>
+                <span class="badge" data-status="{{$inv.StatusKey}}">{{$inv.StatusLabel}}</span>
+                <span class="row-toggle" aria-hidden="true">Details</span>
+                <button type="button" class="btn btn-danger"
+                        onclick="event.preventDefault()"
+                        hx-delete="/invitees/{{$inv.ID}}"
+                        hx-confirm="Delete {{$inv.Names}}? This can't be undone."
+                        hx-target="#page-status" hx-swap="innerHTML">
+                    {{if gt (len $inv.Guests) 1}}Delete couple{{else}}Delete{{end}}
+                </button>
+            </div>
         </summary>
         <div class="invitee-detail"></div>
     </details>
