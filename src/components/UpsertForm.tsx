@@ -152,7 +152,7 @@ export function UpsertForm({
                         </p>
                         <p className={typography.p}>
                             <strong>
-                                Cela nous ferait plaisir de vous avoir parmis
+                                Cela nous ferait plaisir de vous avoir parmi
                                 nous pour célébrer ensemble.
                             </strong>
                         </p>
