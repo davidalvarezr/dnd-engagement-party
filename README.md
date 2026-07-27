@@ -14,11 +14,25 @@ pnpm dev
 
 Or just run `run` from inside the Nix dev shell, which does `db`, `pnpm install`, and `pnpm dev` in one step.
 
-- `pnpm db:setup` starts the local Postgres cluster (Nix-managed, data in `.data/postgres` — see `flake.nix`), applies migrations, and seeds the database. It's a shortcut for `pnpm db:up && pnpm db:migrate && pnpm db:seed`. `db-stop` stops it; `db-fg` runs it in the foreground.
-- **Migrations create tables; seeding fills them.** Running only `prisma migrate deploy` (`pnpm db:migrate`) gives you an empty `Invitation` table — every `/invite/<code>` link will 404 with "You are not invited" until you've also run `pnpm db:seed`.
-- Seeding (`prisma db seed`, wired via the `prisma.seed` field in `package.json`) requires the gitignored `prisma/guests-data.ts`, which contains real guest data and only exists on the maintainer's machines (see the NAS deployment note below for how it's provisioned outside of git). Without it, `pnpm db:seed` will fail to import and there's nothing to seed with.
+- `pnpm db:setup` starts the local Postgres cluster (Nix-managed, data in `.data/postgres` — see `flake.nix`) and applies migrations. It's a shortcut for `pnpm db:up && pnpm db:migrate`. `db-stop` stops it; `db-fg` runs it in the foreground.
 
-Once seeded, open [http://localhost:3000](http://localhost:3000) and visit any invite link printed by the seed script (or an existing one from the database), e.g. `http://localhost:3000/invite/<code>`.
+**Nix dev shell commands** (also printed on `nix develop`, see `flake.nix`):
+
+| Command | What it does |
+| --- | --- |
+| `db` | Start the local Postgres in the background |
+| `db-fg` | Start the local Postgres in the foreground (Ctrl+C to stop, no `db-stop` needed) |
+| `db-stop` | Stop the backgrounded local Postgres |
+| `migrate` | Start Postgres and apply pending Prisma migrations |
+| `run` | Run the main app (`pnpm dev`) |
+| `run-admin` | Run the admin app (`go run`) |
+| `run-admin-prod` | Run the prod admin app (`go run`) |
+| `format` | Format both apps (biome + gofmt) |
+| `check` | Run every check both apps run in CI |
+
+- **Migrations create tables; they don't add guests.** Running `prisma migrate deploy` (`pnpm db:migrate`) gives you an empty `Invitation` table — every `/invite/<code>` link will 404 with "You are not invited" until you add guests via the admin app's CSV import (see `docs/invitee-list.example.csv` for the format).
+
+Once you've imported guests, open [http://localhost:3000](http://localhost:3000) and visit an invite link, e.g. `http://localhost:3000/invite/<code>`.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
@@ -99,9 +113,6 @@ cd dnd-engagement-party
 cp .env.example .env
 # fill in real values in .env
 chmod 600 .env
-# real guest data never lives in git or the image - place this
-# gitignored file here manually (scp from your dev machine)
-#   prisma/guests-data.ts
 
 # the image is private - authenticate the NAS's Docker daemon once so
 # both this pull and Watchtower's periodic pulls succeed. Use a GitHub
@@ -110,10 +121,9 @@ echo "$GITHUB_PAT" | docker login ghcr.io -u <your-github-username> --password-s
 
 docker compose up -d
 
-# seed the initial guest list from prisma/guests-data.ts (one-time - the
-# admin app is the source of truth after this, so this does not run
+# load the initial guest list via the admin app's CSV import (one-time -
+# the admin app is the source of truth after this, so this does not run
 # automatically on restarts/deploys)
-docker compose exec web node_modules/.bin/tsx prisma/seed.ts
 ```
 
 **Steady state**: nothing to do. A `watchtower` service polls the registry every 5 minutes and automatically pulls + restarts the `web` container when a new `latest` image is published — no manual steps for ordinary releases. Watchtower reuses the Docker daemon's stored `ghcr.io` credentials, so no extra config is needed there.

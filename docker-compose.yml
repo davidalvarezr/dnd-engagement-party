@@ -31,10 +31,6 @@ services:
       NODE_ENV: production
     ports:
       - "3000:3000"
-    # Real guest data never lives in the image or git history - it's
-    # mounted straight from this host's gitignored working tree.
-    volumes:
-      - ./prisma/guests-data.ts:/app/prisma/guests-data.ts:ro
 
   db-backup:
     image: prodrigestivill/postgres-backup-local:17-alpine

@@ -45,7 +45,6 @@ next-env.d.ts
 /.next/
 /.vscode/
 /src/generated/prisma
-/scripts/output
 
 # postgres backups (contain guest PII, host-local only)
 /backups
@@ -57,7 +56,4 @@ next-env.d.ts
 /.worktrees
 
 # real guest names + invitation codes, host-local only
-/prisma/guests-data.ts
 /docs/diagrams/guest/guest-list.csv
-/prisma/fixups.ts
-/prisma/invitee-list.csv
