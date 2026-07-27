@@ -72,7 +72,7 @@ export function ReadMode({ invitation, onEdit }: Props) {
                     {invitation.boatInfo?.availableSpots !== null &&
                         invitation.boatInfo?.availableSpots !== undefined && (
                             <p className={typography.p}>
-                                🚣 Bâteau disponible —{" "}
+                                🚣 Bateau disponible —{" "}
                                 {invitation.boatInfo.availableSpots} place(s)
                             </p>
                         )}
@@ -80,7 +80,7 @@ export function ReadMode({ invitation, onEdit }: Props) {
                         invitation.boatInfo?.neededSpots !== undefined && (
                             <p className={typography.p}>
                                 🚣 Besoin de {invitation.boatInfo.neededSpots}{" "}
-                                place(s) dans un bâteau
+                                place(s) dans un bateau
                             </p>
                         )}
                 </section>
