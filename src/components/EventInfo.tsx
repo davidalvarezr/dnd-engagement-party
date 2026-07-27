@@ -12,6 +12,9 @@ export function EventInfo() {
                 <h3 className={`${typography.h3} ${styles.headingLeft}`}>
                     infos
                 </h3>
+                <p className={`${typography.p} ${styles.headingLeft}`}>
+                    <strong>Dimanche 16 Août</strong>
+                </p>
                 <h4 className={`${typography.h4} ${styles.headingLeft}`}>
                     horaires
                 </h4>
