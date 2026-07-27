@@ -7,5 +7,17 @@ on:
       - main
 
 jobs:
+  branch-policy:
+    if: github.event.pull_request.base.ref == 'main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Restrict merges into main
+        run: |
+          head_ref="${{ github.head_ref }}"
+          if [[ "$head_ref" != "develop" && "$head_ref" != hotfix/* ]]; then
+            echo "::error::Only 'develop' or a 'hotfix/*' branch may be merged into main (got '$head_ref')."
+            exit 1
+          fi
+
   verify:
     uses: ./.github/workflows/verify.yml
