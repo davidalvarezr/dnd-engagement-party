@@ -169,6 +169,30 @@ func (s *Server) ResetData(w http.ResponseWriter, r *http.Request) {
 	s.renderOOBUpdate(w, r)
 }
 
+// deleteAllConfirmPhrase must be typed exactly into the danger-zone modal
+// before DeleteAllInvitees will call the upstream API. Kept in sync with
+// the main app's own check in src/app/api/admin/invitations/route.ts.
+const deleteAllConfirmPhrase = "DELETE ALL INVITEES"
+
+func (s *Server) DeleteAllInvitees(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		statusMessage(w, "Invalid form submission")
+		return
+	}
+
+	if r.PostFormValue("confirm") != deleteAllConfirmPhrase {
+		statusMessage(w, "Confirmation text does not match — nothing was deleted")
+		return
+	}
+
+	if err := s.Client.DeleteAllInvitations(r.Context(), deleteAllConfirmPhrase); err != nil {
+		statusMessage(w, errMessage(err))
+		return
+	}
+
+	s.renderOOBUpdate(w, r)
+}
+
 func (s *Server) InviteeDetail(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil {

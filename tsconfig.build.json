@@ -1,9 +1,0 @@
-{
-    "extends": "./tsconfig.json",
-    "exclude": [
-        "node_modules",
-        "prisma/seed.ts",
-        "prisma/guests-data.test.ts",
-        "scripts"
-    ]
-}

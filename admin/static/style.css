@@ -172,6 +172,13 @@ section > h2 {
     font-weight: 600;
 }
 
+.section-header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+}
+
 /* Stats ------------------------------------------------------------------ */
 
 .stat-grid {
@@ -255,8 +262,12 @@ section > h2 {
 
 .invitee-row > summary {
     padding: var(--space-3) var(--space-4);
-    cursor: pointer;
     list-style: none;
+    cursor: pointer;
+}
+
+.invitee-row > summary::-webkit-details-marker {
+    display: none;
 }
 
 .invitee-row-header {

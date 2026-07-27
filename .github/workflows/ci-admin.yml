@@ -10,6 +10,10 @@ on:
       - ".github/workflows/ci-admin.yml"
       - ".github/workflows/verify-admin.yml"
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   verify:
     uses: ./.github/workflows/verify-admin.yml
