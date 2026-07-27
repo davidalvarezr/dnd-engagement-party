@@ -148,16 +148,16 @@ export function UpsertForm({
                             className={`${typography.p} ${styles.leadParagraph}`}
                         >
                             <strong>Okay, let’s GO</strong> fêter nos
-                            fiançialles !
+                            fiançailles !
                         </p>
                         <p className={typography.p}>
                             <strong>
-                                Cela nous ferait plaisir de vous avoir parmis
+                                Cela nous ferait plaisir de vous avoir parmi
                                 nous pour célébrer ensemble.
                             </strong>
                         </p>
                         <p className={typography.p}>
-                            Les infos ainsi que la questionnaire pour
+                            Les infos ainsi que le questionnaire pour
                             l’organisation se trouvent ci-dessous,{" "}
                             <strong>veuillez compléter au plus vite</strong>{" "}
                             pour s’assurer d’avoir une place dans un bateau :)
