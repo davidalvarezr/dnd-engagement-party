@@ -148,7 +148,7 @@ export function UpsertForm({
                             className={`${typography.p} ${styles.leadParagraph}`}
                         >
                             <strong>Okay, let’s GO</strong> fêter nos
-                            fiançialles !
+                            fiançailles !
                         </p>
                         <p className={typography.p}>
                             <strong>
