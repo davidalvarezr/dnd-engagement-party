@@ -246,17 +246,12 @@ section > h2 {
 }
 
 .invitee-row {
+    padding: var(--space-3) var(--space-4);
     border-top: 1px solid var(--border);
 }
 
 .invitee-row:first-child {
     border-top: none;
-}
-
-.invitee-row > summary {
-    padding: var(--space-3) var(--space-4);
-    cursor: pointer;
-    list-style: none;
 }
 
 .invitee-row-header {
@@ -313,7 +308,8 @@ section > h2 {
 
 .invitee-detail {
     padding: var(--space-4);
-    background: var(--surface);
+    margin: 0 calc(var(--space-4) * -1) calc(var(--space-3) * -1);
+    background: red; /* TEMP: confirm CSS reload */
     border-top: 1px solid var(--border);
     display: grid;
     gap: var(--space-3);
