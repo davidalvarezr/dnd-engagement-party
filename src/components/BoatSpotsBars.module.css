@@ -1,0 +1,38 @@
+.bars {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    margin: 1rem 0;
+}
+
+.bar p {
+    margin: 0 0 0.35rem;
+}
+
+.track {
+    width: 100%;
+    height: 0.9rem;
+    border-radius: 999px;
+    background: var(--color-cream);
+    overflow: hidden;
+}
+
+.fill {
+    width: 100%;
+    height: 100%;
+    border-radius: 999px;
+    transform-origin: left;
+    transition: transform 0.3s ease;
+}
+
+.green {
+    background: var(--color-success);
+}
+
+.orange {
+    background: var(--color-warning);
+}
+
+.red {
+    background: var(--color-danger);
+}

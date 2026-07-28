@@ -8,6 +8,9 @@
     --color-focus-ring: #00ffcc;
     --color-disabled: #d2d2d2;
     --color-cream: #f6f8f3;
+    --color-success: #2f9e44;
+    --color-warning: #e08c1f;
+    --color-danger: #c0392b;
 
     position: relative;
     min-height: 100%;

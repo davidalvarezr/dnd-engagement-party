@@ -1,4 +1,5 @@
 import { requireApiKey } from "@/lib/admin-auth"
+import { boatInfoSelect, sumBoatSpots } from "@/lib/boat-stats"
 import { prisma } from "@/lib/prisma"
 
 export async function GET(request: Request) {
@@ -12,7 +13,7 @@ export async function GET(request: Request) {
         notParticipatingGuests,
         undecidedGuests,
         activityCounts,
-        boatTotals,
+        boatInfos,
     ] = await Promise.all([
         prisma.invitation.count(),
         prisma.invitation.count({ where: { respondedAt: { not: null } } }),
@@ -23,9 +24,7 @@ export async function GET(request: Request) {
             by: ["activity"],
             _count: { _all: true },
         }),
-        prisma.boatInfo.aggregate({
-            _sum: { availableSpots: true, neededSpots: true },
-        }),
+        prisma.boatInfo.findMany({ select: boatInfoSelect }),
     ])
 
     return Response.json({
@@ -41,9 +40,6 @@ export async function GET(request: Request) {
         activities: Object.fromEntries(
             activityCounts.map((row) => [row.activity, row._count._all]),
         ),
-        boat: {
-            availableSpots: boatTotals._sum.availableSpots ?? 0,
-            neededSpots: boatTotals._sum.neededSpots ?? 0,
-        },
+        boat: sumBoatSpots(boatInfos),
     })
 }

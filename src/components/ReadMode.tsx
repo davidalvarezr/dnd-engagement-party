@@ -2,7 +2,7 @@
 
 import type { getInvitationByCode } from "@/lib/invitations"
 import typography from "@/styles/typography.module.css"
-import { EventInfo } from "./EventInfo"
+import { type BoatStats, EventInfo } from "./EventInfo"
 import { InviteShell } from "./InviteShell"
 import styles from "./ReadMode.module.css"
 import { BoatDivider } from "./ui/BoatDivider"
@@ -18,10 +18,11 @@ const ACTIVITY_LABELS: Record<string, string> = {
 
 type Props = {
     invitation: Invitation
+    boatStats: BoatStats
     onEdit: () => void
 }
 
-export function ReadMode({ invitation, onEdit }: Props) {
+export function ReadMode({ invitation, boatStats, onEdit }: Props) {
     const attending = invitation.guests.filter((g) => g.participating)
     const notAttending = invitation.guests.filter((g) => !g.participating)
 
@@ -91,7 +92,7 @@ export function ReadMode({ invitation, onEdit }: Props) {
                     </Button>
                 </div>
 
-                <EventInfo />
+                <EventInfo boatStats={boatStats} />
             </div>
         </InviteShell>
     )
