@@ -4,7 +4,7 @@ import Image from "next/image"
 import { useState } from "react"
 import type { getInvitationByCode } from "@/lib/invitations"
 import typography from "@/styles/typography.module.css"
-import { EventInfo } from "./EventInfo"
+import { type BoatStats, EventInfo } from "./EventInfo"
 import { InviteShell } from "./InviteShell"
 import styles from "./UpsertForm.module.css"
 import { BoatDivider } from "./ui/BoatDivider"
@@ -19,6 +19,7 @@ type Activity = "DESCENTE_RHONE" | "BBQ_MIDI"
 
 type Props = {
     invitation: Invitation
+    boatStats: BoatStats
     onSubmit: (data: SubmitPayload) => void
     onCancel?: () => void
     isPending?: boolean
@@ -52,6 +53,7 @@ export function deriveBoatChoice(
 
 export function UpsertForm({
     invitation,
+    boatStats,
     onSubmit,
     onCancel,
     isPending = false,
@@ -165,7 +167,7 @@ export function UpsertForm({
                     </div>
                 </div>
 
-                <EventInfo />
+                <EventInfo boatStats={boatStats} />
 
                 <WavyDivider />
 

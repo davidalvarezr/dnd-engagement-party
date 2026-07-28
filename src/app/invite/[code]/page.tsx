@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next"
 import { notFound } from "next/navigation"
 import { InviteForm } from "@/components/InviteForm"
+import { getBoatStats } from "@/lib/boat-stats"
 import { getInvitationByCode } from "@/lib/invitations"
 
 type Props = {
@@ -42,7 +43,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function InvitePage({ params }: Props) {
     const { code } = await params
 
-    const invitation = await getInvitationByCode(code)
+    const [invitation, boatStats] = await Promise.all([
+        getInvitationByCode(code),
+        getBoatStats(),
+    ])
 
     if (!invitation) notFound()
 
@@ -51,7 +55,7 @@ export default async function InvitePage({ params }: Props) {
             <section>{/* Scrollable content with animations */}</section>
 
             <section>
-                <InviteForm invitation={invitation} />
+                <InviteForm invitation={invitation} boatStats={boatStats} />
             </section>
         </main>
     )

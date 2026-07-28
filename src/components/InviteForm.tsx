@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react"
 import type { getInvitationByCode } from "@/lib/invitations"
+import type { BoatStats } from "./EventInfo"
 import { ReadMode } from "./ReadMode"
 import { type SubmitPayload, UpsertForm } from "./UpsertForm"
 
@@ -9,9 +10,10 @@ type Invitation = NonNullable<Awaited<ReturnType<typeof getInvitationByCode>>>
 
 type Props = {
     invitation: Invitation
+    boatStats: BoatStats
 }
 
-export function InviteForm({ invitation: initial }: Props) {
+export function InviteForm({ invitation: initial, boatStats }: Props) {
     const [invitation, setInvitation] = useState(initial)
     const [isEditing, setIsEditing] = useState(false)
     const [isPending, startTransition] = useTransition()
@@ -36,6 +38,7 @@ export function InviteForm({ invitation: initial }: Props) {
         return (
             <ReadMode
                 invitation={invitation}
+                boatStats={boatStats}
                 onEdit={() => setIsEditing(true)}
             />
         )
@@ -44,6 +47,7 @@ export function InviteForm({ invitation: initial }: Props) {
     return (
         <UpsertForm
             invitation={invitation}
+            boatStats={boatStats}
             onSubmit={handleSubmit}
             isPending={isPending}
             onCancel={
