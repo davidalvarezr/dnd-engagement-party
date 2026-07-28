@@ -12,7 +12,7 @@ export async function GET(request: Request) {
         notParticipatingGuests,
         undecidedGuests,
         activityCounts,
-        boatTotals,
+        boatInfos,
     ] = await Promise.all([
         prisma.invitation.count(),
         prisma.invitation.count({ where: { respondedAt: { not: null } } }),
@@ -23,10 +23,28 @@ export async function GET(request: Request) {
             by: ["activity"],
             _count: { _all: true },
         }),
-        prisma.boatInfo.aggregate({
-            _sum: { availableSpots: true, neededSpots: true },
+        prisma.boatInfo.findMany({
+            select: {
+                availableSpots: true,
+                neededSpots: true,
+                invitation: { select: { guests: { select: { id: true } } } },
+            },
         }),
     ])
+
+    // Offering a boat doesn't remove that guest's own need for a ride: a
+    // single offering guest still occupies 1 seat, a couple 2.
+    let boatAvailableSpots = 0
+    let boatNeededSpots = 0
+    for (const info of boatInfos) {
+        if (info.availableSpots != null) {
+            boatAvailableSpots += info.availableSpots
+            boatNeededSpots += info.invitation.guests.length
+        }
+        if (info.neededSpots != null) {
+            boatNeededSpots += info.neededSpots
+        }
+    }
 
     return Response.json({
         invitations: {
@@ -42,8 +60,8 @@ export async function GET(request: Request) {
             activityCounts.map((row) => [row.activity, row._count._all]),
         ),
         boat: {
-            availableSpots: boatTotals._sum.availableSpots ?? 0,
-            neededSpots: boatTotals._sum.neededSpots ?? 0,
+            availableSpots: boatAvailableSpots,
+            neededSpots: boatNeededSpots,
         },
     })
 }

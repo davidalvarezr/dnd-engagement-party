@@ -5,7 +5,7 @@ vi.mock("@/lib/prisma", () => ({
         invitation: { count: vi.fn() },
         guest: { count: vi.fn() },
         activityParticipation: { groupBy: vi.fn() },
-        boatInfo: { aggregate: vi.fn() },
+        boatInfo: { findMany: vi.fn() },
     },
 }))
 
@@ -29,7 +29,7 @@ describe("GET /api/admin/stats", () => {
         expect(response.status).toBe(401)
     })
 
-    it("aggregates invitation, guest, activity, and boat stats", async () => {
+    it("aggregates invitation, guest, activity, and boat stats, counting offering guests as also needing a ride", async () => {
         vi.mocked(prisma.invitation.count)
             .mockResolvedValueOnce(10)
             .mockResolvedValueOnce(6)
@@ -40,9 +40,26 @@ describe("GET /api/admin/stats", () => {
         vi.mocked(prisma.activityParticipation.groupBy).mockResolvedValue([
             { activity: "BBQ_MIDI", _count: { _all: 4 } },
         ] as never)
-        vi.mocked(prisma.boatInfo.aggregate).mockResolvedValue({
-            _sum: { availableSpots: 10, neededSpots: 3 },
-        } as never)
+        vi.mocked(prisma.boatInfo.findMany).mockResolvedValue([
+            // couple offering 3 spots: still needs 2 seats for themselves
+            {
+                availableSpots: 3,
+                neededSpots: null,
+                invitation: { guests: [{ id: 1 }, { id: 2 }] },
+            },
+            // single guest offering 2 spots: still needs 1 seat
+            {
+                availableSpots: 2,
+                neededSpots: null,
+                invitation: { guests: [{ id: 3 }] },
+            },
+            // single guest asking for a spot
+            {
+                availableSpots: null,
+                neededSpots: 1,
+                invitation: { guests: [{ id: 4 }] },
+            },
+        ] as never)
 
         const response = await GET(makeRequest())
 
@@ -51,7 +68,7 @@ describe("GET /api/admin/stats", () => {
             invitations: { total: 10, responded: 6 },
             guests: { participating: 8, notParticipating: 2, undecided: 5 },
             activities: { BBQ_MIDI: 4 },
-            boat: { availableSpots: 10, neededSpots: 3 },
+            boat: { availableSpots: 5, neededSpots: 4 },
         })
     })
 
@@ -59,9 +76,7 @@ describe("GET /api/admin/stats", () => {
         vi.mocked(prisma.invitation.count).mockResolvedValue(0)
         vi.mocked(prisma.guest.count).mockResolvedValue(0)
         vi.mocked(prisma.activityParticipation.groupBy).mockResolvedValue([])
-        vi.mocked(prisma.boatInfo.aggregate).mockResolvedValue({
-            _sum: { availableSpots: null, neededSpots: null },
-        } as never)
+        vi.mocked(prisma.boatInfo.findMany).mockResolvedValue([])
 
         const response = await GET(makeRequest())
         const body = await response.json()
