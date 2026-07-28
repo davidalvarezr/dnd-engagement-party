@@ -1,0 +1,17 @@
+{{define "activities-panel"}}<section id="activities-panel" role="tabpanel" aria-labelledby="tab-activities" hidden>{{template "activities-panel-inner" .}}</section>
+{{end}}
+
+{{define "activities-panel-inner"}}<div class="section-header">
+    <h2>Activities</h2>
+</div>
+{{range .}}<div class="activity-group">
+    <h3>{{.Label}}</h3>
+    {{if .Invitees}}<ul class="name-list">
+        {{range .Invitees}}<li>{{.Names}}</li>
+        {{end}}
+    </ul>
+    {{else}}<p class="empty-note">No one signed up yet.</p>
+    {{end}}
+</div>
+{{end}}
+{{end}}

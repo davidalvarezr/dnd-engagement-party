@@ -158,6 +158,65 @@ func SingleOptions(invitations []client.Invitation) []SingleOption {
 	return options
 }
 
+// ActivityGroup is one activity's participating households, for the
+// Activities tab.
+type ActivityGroup struct {
+	Activity string
+	Label    string
+	Invitees []InvitationView
+}
+
+// ActivityGroups buckets invitation views by activity, in activityOrder. An
+// invitation belongs to a group if it has an ActivityParticipation row for
+// that activity, regardless of individual guest Participating status — the
+// same signal StatsView.ActivityRows counts already use.
+func ActivityGroups(views []InvitationView) []ActivityGroup {
+	groups := make([]ActivityGroup, 0, len(activityOrder))
+	for _, activity := range activityOrder {
+		group := ActivityGroup{Activity: activity, Label: activityLabel(activity)}
+		for _, v := range views {
+			for _, ap := range v.ActivityParticipants {
+				if ap.Activity == activity {
+					group.Invitees = append(group.Invitees, v)
+					break
+				}
+			}
+		}
+		groups = append(groups, group)
+	}
+	return groups
+}
+
+// BoatGroups is the Offering/Needing split for the Boat tab.
+type BoatGroups struct {
+	Offering []BoatEntry
+	Needing  []BoatEntry
+}
+
+// BoatEntry is one household's boat offer or need.
+type BoatEntry struct {
+	Names string
+	Spots int
+}
+
+// NewBoatGroups splits invitation views into "offering" and "needing" boat
+// spot groups.
+func NewBoatGroups(views []InvitationView) BoatGroups {
+	var g BoatGroups
+	for _, v := range views {
+		if v.BoatInfo == nil {
+			continue
+		}
+		if v.BoatInfo.AvailableSpots != nil {
+			g.Offering = append(g.Offering, BoatEntry{Names: v.Names, Spots: *v.BoatInfo.AvailableSpots})
+		}
+		if v.BoatInfo.NeededSpots != nil {
+			g.Needing = append(g.Needing, BoatEntry{Names: v.Names, Spots: *v.BoatInfo.NeededSpots})
+		}
+	}
+	return g
+}
+
 // StatsView adds display-ready fields on top of the raw stats payload.
 type StatsView struct {
 	client.Stats

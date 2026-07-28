@@ -91,6 +91,73 @@ func TestSingleOptionsOnlyIncludesUnpairedGuests(t *testing.T) {
 	}
 }
 
+func intPtr(i int) *int { return &i }
+
+func TestActivityGroups(t *testing.T) {
+	views := InvitationViews([]client.Invitation{
+		{
+			Guests: []client.Guest{{Name: "Alex"}, {Name: "Jamie"}},
+			ActivityParticipants: []client.ActivityParticipation{
+				{Activity: "DESCENTE_RHONE"},
+				{Activity: "BBQ_MIDI"},
+			},
+		},
+		{
+			Guests: []client.Guest{{Name: "Sam"}},
+			ActivityParticipants: []client.ActivityParticipation{
+				{Activity: "DESCENTE_RHONE"},
+			},
+		},
+		{
+			Guests: []client.Guest{{Name: "Jo"}},
+		},
+	})
+
+	groups := ActivityGroups(views)
+
+	if len(groups) != 2 {
+		t.Fatalf("ActivityGroups() returned %d groups, want 2", len(groups))
+	}
+
+	rhone := groups[0]
+	if rhone.Activity != "DESCENTE_RHONE" || len(rhone.Invitees) != 2 {
+		t.Fatalf("DESCENTE_RHONE group = %+v, want 2 invitees", rhone)
+	}
+	if rhone.Invitees[0].Names != "Alex & Jamie" || rhone.Invitees[1].Names != "Sam" {
+		t.Errorf("DESCENTE_RHONE names = %q, %q, want %q, %q", rhone.Invitees[0].Names, rhone.Invitees[1].Names, "Alex & Jamie", "Sam")
+	}
+
+	bbq := groups[1]
+	if bbq.Activity != "BBQ_MIDI" || len(bbq.Invitees) != 1 || bbq.Invitees[0].Names != "Alex & Jamie" {
+		t.Fatalf("BBQ_MIDI group = %+v, want [Alex & Jamie]", bbq)
+	}
+}
+
+func TestNewBoatGroups(t *testing.T) {
+	views := InvitationViews([]client.Invitation{
+		{
+			Guests:   []client.Guest{{Name: "Alex"}, {Name: "Jamie"}},
+			BoatInfo: &client.BoatInfo{AvailableSpots: intPtr(3)},
+		},
+		{
+			Guests:   []client.Guest{{Name: "Sam"}},
+			BoatInfo: &client.BoatInfo{NeededSpots: intPtr(2)},
+		},
+		{
+			Guests: []client.Guest{{Name: "Jo"}},
+		},
+	})
+
+	groups := NewBoatGroups(views)
+
+	if len(groups.Offering) != 1 || groups.Offering[0].Names != "Alex & Jamie" || groups.Offering[0].Spots != 3 {
+		t.Errorf("Offering = %+v, want [{Alex & Jamie 3}]", groups.Offering)
+	}
+	if len(groups.Needing) != 1 || groups.Needing[0].Names != "Sam" || groups.Needing[0].Spots != 2 {
+		t.Errorf("Needing = %+v, want [{Sam 2}]", groups.Needing)
+	}
+}
+
 func TestNewLinkPreviewViewConflict(t *testing.T) {
 	responded := "2026-01-01T00:00:00.000Z"
 

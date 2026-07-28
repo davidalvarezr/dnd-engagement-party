@@ -365,6 +365,86 @@ section > h2 {
     font-style: italic;
 }
 
+/* Tabs ------------------------------------------------------------------ */
+
+.tab-strip {
+    display: grid;
+    gap: var(--space-4);
+}
+
+.tab-strip [role="tablist"] {
+    display: flex;
+    gap: var(--space-2);
+    border-bottom: 1px solid var(--border);
+}
+
+.tab-button {
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: var(--space-2) var(--space-3);
+    font: inherit;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    margin-bottom: -1px;
+}
+
+.tab-button:hover {
+    color: var(--ink);
+}
+
+.tab-button[aria-selected="true"] {
+    color: var(--ink);
+    border-bottom-color: var(--accent);
+}
+
+/* Activities / Boat panels ----------------------------------------------- */
+
+.activity-group,
+.boat-group {
+    display: grid;
+    gap: var(--space-2);
+}
+
+.activity-group + .activity-group,
+.boat-group + .boat-group {
+    margin-top: var(--space-4);
+}
+
+.activity-group h3,
+.boat-group h3 {
+    font-size: var(--text-base);
+    font-weight: 600;
+}
+
+.name-list {
+    display: grid;
+    gap: var(--space-1);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+}
+
+.name-list li {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: var(--space-2) var(--space-3);
+    border-top: 1px solid var(--border);
+}
+
+.name-list li:first-child {
+    border-top: none;
+}
+
+.boat-count {
+    color: var(--muted);
+    font-size: var(--text-sm);
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+}
+
 /* Buttons ------------------------------------------------------------------ */
 
 .btn {

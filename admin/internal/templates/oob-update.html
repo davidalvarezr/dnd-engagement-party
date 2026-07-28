@@ -1,4 +1,6 @@
 {{define "oob-update"}}<div hx-swap-oob="innerHTML:#stats-panel">{{template "stats-panel-inner" .Stats}}</div>
 <div hx-swap-oob="innerHTML:#invitee-list">{{template "invitee-list-inner" .Invitations}}</div>
 <div hx-swap-oob="innerHTML:#link-panel">{{template "link-panel-inner" .Singles}}</div>
+<div hx-swap-oob="innerHTML:#activities-panel">{{template "activities-panel-inner" .Activities}}</div>
+<div hx-swap-oob="innerHTML:#boat-panel">{{template "boat-panel-inner" .Boat}}</div>
 {{end}}
