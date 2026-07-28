@@ -1,0 +1,25 @@
+{{define "boat-panel"}}<section id="boat-panel" role="tabpanel" aria-labelledby="tab-boat" hidden>{{template "boat-panel-inner" .}}</section>
+{{end}}
+
+{{define "boat-panel-inner"}}<div class="section-header">
+    <h2>Boat</h2>
+</div>
+<div class="boat-group">
+    <h3>Offering boat spot(s)</h3>
+    {{if .Offering}}<ul class="name-list">
+        {{range .Offering}}<li>{{.Names}} <span class="boat-count">{{.Spots}} spot(s)</span></li>
+        {{end}}
+    </ul>
+    {{else}}<p class="empty-note">No one is offering a boat spot yet.</p>
+    {{end}}
+</div>
+<div class="boat-group">
+    <h3>Need boat spot(s)</h3>
+    {{if .Needing}}<ul class="name-list">
+        {{range .Needing}}<li>{{.Names}} <span class="boat-count">{{.Spots}} spot(s)</span></li>
+        {{end}}
+    </ul>
+    {{else}}<p class="empty-note">No one needs a boat spot yet.</p>
+    {{end}}
+</div>
+{{end}}
