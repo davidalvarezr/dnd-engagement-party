@@ -1,12 +1,9 @@
 {{define "invitee-list"}}<section id="invitee-list" role="tabpanel" aria-labelledby="tab-invitees">{{template "invitee-list-inner" .}}</section>
 {{end}}
 
-{{define "invitee-list-inner"}}<div class="section-header">
-    <h2>Invitees</h2>
-    <div class="section-header-actions">
-        <button type="button" class="btn btn-ghost" onclick="copyInviteList(this)">Copy all invites</button>
-        <a class="btn btn-ghost" href="/export" download>Export CSV</a>
-    </div>
+{{define "invitee-list-inner"}}<div class="section-header-actions">
+    <button type="button" class="btn btn-ghost" onclick="copyInviteList(this)">Copy all invites</button>
+    <a class="btn btn-ghost" href="/export" download>Export CSV</a>
 </div>
 <div class="invitee-list">
     {{range $inv := .}}<details class="invitee-row" hx-get="/fragments/invitees/{{$inv.ID}}" hx-trigger="toggle once"
@@ -18,6 +15,7 @@
                         onclick="event.preventDefault()"
                         hx-delete="/guests/{{$g.ID}}" hx-confirm="Remove {{$g.Name}} from this invite?"
                         hx-target="#page-status" hx-swap="innerHTML" hx-disabled-elt="this"><span class="spinner" aria-hidden="true"></span>Remove</button>{{end}}{{end}}
+                    {{range $inv.Activities}}<span class="activity-chip" data-activity="{{.Key}}">{{.Emoji}} {{.Label}}</span>{{end}}
                 </span>
                 <span class="badge" data-status="{{$inv.StatusKey}}">{{$inv.StatusLabel}}</span>
                 <span class="row-toggle" aria-hidden="true">Details</span>

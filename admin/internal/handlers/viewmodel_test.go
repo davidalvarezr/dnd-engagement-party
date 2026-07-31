@@ -47,7 +47,7 @@ func TestNewInvitationViewStatus(t *testing.T) {
 			},
 			responded: &responded,
 			wantLabel: "1/2 attending",
-			wantKey:   "",
+			wantKey:   "partial",
 		},
 	}
 
@@ -75,6 +75,24 @@ func TestNewInvitationViewNames(t *testing.T) {
 
 	if view.Names != "Alex & Jamie" {
 		t.Errorf("Names = %q, want %q", view.Names, "Alex & Jamie")
+	}
+}
+
+func TestNewInvitationViewActivities(t *testing.T) {
+	view := newInvitationView(client.Invitation{
+		Guests: []client.Guest{{Name: "Alex"}},
+		ActivityParticipants: []client.ActivityParticipation{
+			{Activity: "BBQ_MIDI"},
+			{Activity: "DESCENTE_RHONE"},
+		},
+	})
+
+	want := []ActivityChip{
+		{Key: "BBQ_MIDI", Label: "BBQ (lunch)", Emoji: "🍖"},
+		{Key: "DESCENTE_RHONE", Label: "Rhône descent", Emoji: "🛶"},
+	}
+	if len(view.Activities) != len(want) || view.Activities[0] != want[0] || view.Activities[1] != want[1] {
+		t.Errorf("Activities = %v, want %v", view.Activities, want)
 	}
 }
 

@@ -16,6 +16,10 @@
     --accent-ink: oklch(0.98 0.01 200);
 
     --warn: oklch(0.55 0.15 75); /* not attending */
+    --success: oklch(0.55 0.14 145); /* attending */
+
+    --activity-bbq: oklch(0.5 0.16 25); /* reddish — BBQ */
+    --activity-boat: oklch(0.5 0.12 230); /* blueish — Rhône descent */
 
     --font-sans:
         -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
@@ -61,6 +65,10 @@
         --accent-ink: oklch(0.1 0.01 200);
 
         --warn: oklch(0.68 0.15 78);
+        --success: oklch(0.68 0.15 145);
+
+        --activity-bbq: oklch(0.62 0.18 25);
+        --activity-boat: oklch(0.68 0.12 230);
 
         color-scheme: dark;
     }
@@ -159,22 +167,10 @@ section > h2 {
     font-weight: 600;
 }
 
-.section-header {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: var(--space-4);
-    flex-wrap: wrap;
-}
-
-.section-header > h2 {
-    font-size: var(--text-lg);
-    font-weight: 600;
-}
-
 .section-header-actions {
     display: flex;
     align-items: center;
+    justify-content: flex-end;
     gap: var(--space-2);
     flex-wrap: wrap;
 }
@@ -302,7 +298,11 @@ section > h2 {
 }
 
 .badge[data-status="attending"] {
-    color: var(--accent-strong);
+    color: var(--success);
+}
+
+.badge[data-status="partial"] {
+    color: var(--activity-boat);
 }
 
 .badge[data-status="not-attending"] {
@@ -353,11 +353,24 @@ section > h2 {
     gap: var(--space-2);
 }
 
-.detail-activities span {
+.activity-chip {
     border: 1px solid var(--border);
     border-radius: 999px;
     padding: 0.1rem var(--space-2);
     font-size: var(--text-xs);
+    white-space: nowrap;
+}
+
+.activity-chip[data-activity="BBQ_MIDI"] {
+    border-color: var(--activity-bbq);
+    color: var(--activity-bbq);
+    background: color-mix(in oklch, var(--activity-bbq) 12%, transparent);
+}
+
+.activity-chip[data-activity="DESCENTE_RHONE"] {
+    border-color: var(--activity-boat);
+    color: var(--activity-boat);
+    background: color-mix(in oklch, var(--activity-boat) 12%, transparent);
 }
 
 .empty-note {
@@ -398,6 +411,10 @@ section > h2 {
 .tab-button[aria-selected="true"] {
     color: var(--ink);
     border-bottom-color: var(--accent);
+}
+
+.tab-strip [role="tabpanel"][hidden] {
+    display: none;
 }
 
 /* Activities / Boat panels ----------------------------------------------- */

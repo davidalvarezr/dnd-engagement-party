@@ -14,11 +14,34 @@ var activityLabels = map[string]string{
 	"BBQ_MIDI":       "BBQ (lunch)",
 }
 
+var activityEmojis = map[string]string{
+	"DESCENTE_RHONE": "🛶",
+	"BBQ_MIDI":       "🍖",
+}
+
 func activityLabel(activity string) string {
 	if label, ok := activityLabels[activity]; ok {
 		return label
 	}
 	return activity
+}
+
+// ActivityChip is a badge-ready projection of a chosen activity.
+type ActivityChip struct {
+	Key   string
+	Label string
+	Emoji string
+}
+
+// activityChipsFor returns an invitation's chosen activities as badges,
+// sorted by display label.
+func activityChipsFor(inv client.Invitation) []ActivityChip {
+	chips := make([]ActivityChip, len(inv.ActivityParticipants))
+	for i, a := range inv.ActivityParticipants {
+		chips[i] = ActivityChip{Key: a.Activity, Label: activityLabel(a.Activity), Emoji: activityEmojis[a.Activity]}
+	}
+	sort.Slice(chips, func(i, j int) bool { return chips[i].Label < chips[j].Label })
+	return chips
 }
 
 // InvitationView is the summary-row projection of an invitation.
@@ -27,6 +50,7 @@ type InvitationView struct {
 	Names       string
 	StatusLabel string
 	StatusKey   string
+	Activities  []ActivityChip
 }
 
 func newInvitationView(inv client.Invitation) InvitationView {
@@ -49,11 +73,11 @@ func newInvitationView(inv client.Invitation) InvitationView {
 		case attending == 0:
 			statusLabel, statusKey = "Not attending", "not-attending"
 		default:
-			statusLabel = fmt.Sprintf("%d/%d attending", attending, len(inv.Guests))
+			statusLabel, statusKey = fmt.Sprintf("%d/%d attending", attending, len(inv.Guests)), "partial"
 		}
 	}
 
-	return InvitationView{Invitation: inv, Names: names, StatusLabel: statusLabel, StatusKey: statusKey}
+	return InvitationView{Invitation: inv, Names: names, StatusLabel: statusLabel, StatusKey: statusKey, Activities: activityChipsFor(inv)}
 }
 
 func InvitationViews(invitations []client.Invitation) []InvitationView {
@@ -75,7 +99,7 @@ type InvitationDetailView struct {
 	client.Invitation
 	RespondedLabel string
 	Guests         []GuestDetailView
-	Activities     []string
+	Activities     []ActivityChip
 	BoatLabel      string
 	InviteURL      string
 }
@@ -98,17 +122,11 @@ func NewInvitationDetailView(inv client.Invitation, baseURL string) InvitationDe
 		guests[i] = GuestDetailView{Guest: g, StatusLabel: guestStatusLabel(g)}
 	}
 
-	activities := make([]string, len(inv.ActivityParticipants))
-	for i, a := range inv.ActivityParticipants {
-		activities[i] = activityLabel(a.Activity)
-	}
-	sort.Strings(activities)
-
 	return InvitationDetailView{
 		Invitation:     inv,
 		RespondedLabel: respondedLabel,
 		Guests:         guests,
-		Activities:     activities,
+		Activities:     activityChipsFor(inv),
 		BoatLabel:      boatLabel(inv),
 		InviteURL:      inviteURL(baseURL, inv.Code),
 	}
