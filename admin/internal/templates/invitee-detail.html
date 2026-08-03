@@ -4,7 +4,7 @@
 </div>
 <div class="detail-link"><a href="{{.InviteURL}}" target="_blank" rel="noopener">{{.InviteURL}}</a></div>
 <div>{{.RespondedLabel}}</div>
-{{if .Activities}}<div class="detail-activities">{{range .Activities}}<span>{{.}}</span>{{end}}</div>
+{{if .Activities}}<div class="detail-activities">{{range .Activities}}<span class="activity-chip" data-activity="{{.Key}}">{{.Emoji}} {{.Label}}</span>{{end}}</div>
 {{else}}<div class="empty-note">No activities picked</div>
 {{end}}
 {{if .BoatLabel}}<div>{{.BoatLabel}}</div>{{end}}
