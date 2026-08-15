@@ -155,7 +155,11 @@ func TestNewBoatGroups(t *testing.T) {
 	views := InvitationViews([]client.Invitation{
 		{
 			Guests:   []client.Guest{{Name: "Alex"}, {Name: "Jamie"}},
-			BoatInfo: &client.BoatInfo{AvailableSpots: intPtr(3)},
+			BoatInfo: &client.BoatInfo{AvailableSpots: intPtr(6)},
+		},
+		{
+			Guests:   []client.Guest{{Name: "Robin"}},
+			BoatInfo: &client.BoatInfo{AvailableSpots: intPtr(1)},
 		},
 		{
 			Guests:   []client.Guest{{Name: "Sam"}},
@@ -168,11 +172,13 @@ func TestNewBoatGroups(t *testing.T) {
 
 	groups := NewBoatGroups(views)
 
-	if len(groups.Offering) != 1 || groups.Offering[0].Names != "Alex & Jamie" || groups.Offering[0].Spots != 3 {
-		t.Errorf("Offering = %+v, want [{Alex & Jamie 3}]", groups.Offering)
+	if len(groups.Offering) != 2 ||
+		groups.Offering[0] != (BoatEntry{Names: "Alex & Jamie", Spots: 6, NetAvailable: 4}) ||
+		groups.Offering[1] != (BoatEntry{Names: "Robin", Spots: 1, NetAvailable: 0}) {
+		t.Errorf("Offering = %+v, want [{Alex & Jamie 6 4} {Robin 1 0}]", groups.Offering)
 	}
-	if len(groups.Needing) != 1 || groups.Needing[0].Names != "Sam" || groups.Needing[0].Spots != 2 {
-		t.Errorf("Needing = %+v, want [{Sam 2}]", groups.Needing)
+	if len(groups.Needing) != 1 || groups.Needing[0] != (BoatEntry{Names: "Sam", Spots: 2}) {
+		t.Errorf("Needing = %+v, want [{Sam 2 0}]", groups.Needing)
 	}
 }
 
