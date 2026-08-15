@@ -1,0 +1,2 @@
+- Whenever you do something related with worktree, use the wt-create skill
+- Whenever you do something related with branch names, use the branch-name skill 

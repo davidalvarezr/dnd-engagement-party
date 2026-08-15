@@ -1,0 +1,11 @@
+{{define "invitee-tabs"}}<div class="tab-strip">
+    <nav role="tablist" aria-label="Invitee views">
+        <button type="button" role="tab" id="tab-invitees" aria-controls="invitee-list" aria-selected="true" class="tab-button">Invitees</button>
+        <button type="button" role="tab" id="tab-activities" aria-controls="activities-panel" aria-selected="false" class="tab-button">Activities</button>
+        <button type="button" role="tab" id="tab-boat" aria-controls="boat-panel" aria-selected="false" class="tab-button">Boat</button>
+    </nav>
+    {{template "invitee-list" .Invitations}}
+    {{template "activities-panel" .Activities}}
+    {{template "boat-panel" .Boat}}
+</div>
+{{end}}

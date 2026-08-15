@@ -14,11 +14,34 @@ var activityLabels = map[string]string{
 	"BBQ_MIDI":       "BBQ (lunch)",
 }
 
+var activityEmojis = map[string]string{
+	"DESCENTE_RHONE": "🛶",
+	"BBQ_MIDI":       "🍖",
+}
+
 func activityLabel(activity string) string {
 	if label, ok := activityLabels[activity]; ok {
 		return label
 	}
 	return activity
+}
+
+// ActivityChip is a badge-ready projection of a chosen activity.
+type ActivityChip struct {
+	Key   string
+	Label string
+	Emoji string
+}
+
+// activityChipsFor returns an invitation's chosen activities as badges,
+// sorted by display label.
+func activityChipsFor(inv client.Invitation) []ActivityChip {
+	chips := make([]ActivityChip, len(inv.ActivityParticipants))
+	for i, a := range inv.ActivityParticipants {
+		chips[i] = ActivityChip{Key: a.Activity, Label: activityLabel(a.Activity), Emoji: activityEmojis[a.Activity]}
+	}
+	sort.Slice(chips, func(i, j int) bool { return chips[i].Label < chips[j].Label })
+	return chips
 }
 
 // InvitationView is the summary-row projection of an invitation.
@@ -27,6 +50,7 @@ type InvitationView struct {
 	Names       string
 	StatusLabel string
 	StatusKey   string
+	Activities  []ActivityChip
 }
 
 func newInvitationView(inv client.Invitation) InvitationView {
@@ -49,11 +73,11 @@ func newInvitationView(inv client.Invitation) InvitationView {
 		case attending == 0:
 			statusLabel, statusKey = "Not attending", "not-attending"
 		default:
-			statusLabel = fmt.Sprintf("%d/%d attending", attending, len(inv.Guests))
+			statusLabel, statusKey = fmt.Sprintf("%d/%d attending", attending, len(inv.Guests)), "partial"
 		}
 	}
 
-	return InvitationView{Invitation: inv, Names: names, StatusLabel: statusLabel, StatusKey: statusKey}
+	return InvitationView{Invitation: inv, Names: names, StatusLabel: statusLabel, StatusKey: statusKey, Activities: activityChipsFor(inv)}
 }
 
 func InvitationViews(invitations []client.Invitation) []InvitationView {
@@ -75,7 +99,7 @@ type InvitationDetailView struct {
 	client.Invitation
 	RespondedLabel string
 	Guests         []GuestDetailView
-	Activities     []string
+	Activities     []ActivityChip
 	BoatLabel      string
 	InviteURL      string
 }
@@ -98,17 +122,11 @@ func NewInvitationDetailView(inv client.Invitation, baseURL string) InvitationDe
 		guests[i] = GuestDetailView{Guest: g, StatusLabel: guestStatusLabel(g)}
 	}
 
-	activities := make([]string, len(inv.ActivityParticipants))
-	for i, a := range inv.ActivityParticipants {
-		activities[i] = activityLabel(a.Activity)
-	}
-	sort.Strings(activities)
-
 	return InvitationDetailView{
 		Invitation:     inv,
 		RespondedLabel: respondedLabel,
 		Guests:         guests,
-		Activities:     activities,
+		Activities:     activityChipsFor(inv),
 		BoatLabel:      boatLabel(inv),
 		InviteURL:      inviteURL(baseURL, inv.Code),
 	}
@@ -156,6 +174,72 @@ func SingleOptions(invitations []client.Invitation) []SingleOption {
 		}
 	}
 	return options
+}
+
+// ActivityGroup is one activity's participating households, for the
+// Activities tab.
+type ActivityGroup struct {
+	Activity string
+	Label    string
+	Invitees []InvitationView
+}
+
+// ActivityGroups buckets invitation views by activity, in activityOrder. An
+// invitation belongs to a group if it has an ActivityParticipation row for
+// that activity, regardless of individual guest Participating status — the
+// same signal StatsView.ActivityRows counts already use.
+func ActivityGroups(views []InvitationView) []ActivityGroup {
+	groups := make([]ActivityGroup, 0, len(activityOrder))
+	for _, activity := range activityOrder {
+		group := ActivityGroup{Activity: activity, Label: activityLabel(activity)}
+		for _, v := range views {
+			for _, ap := range v.ActivityParticipants {
+				if ap.Activity == activity {
+					group.Invitees = append(group.Invitees, v)
+					break
+				}
+			}
+		}
+		groups = append(groups, group)
+	}
+	return groups
+}
+
+// BoatGroups is the Offering/Needing split for the Boat tab.
+type BoatGroups struct {
+	Offering []BoatEntry
+	Needing  []BoatEntry
+}
+
+// BoatEntry is one household's boat offer or need. NetAvailable is only
+// meaningful for offering entries.
+type BoatEntry struct {
+	Names        string
+	Spots        int
+	NetAvailable int
+}
+
+// NewBoatGroups splits invitation views into "offering" and "needing" boat
+// spot groups. An offering household still needs a ride for its own
+// guests — a couple offering 6 spots on their boat only has 4 left over
+// for others — so Offering entries report that net figure alongside the
+// raw spot count.
+func NewBoatGroups(views []InvitationView) BoatGroups {
+	var g BoatGroups
+	for _, v := range views {
+		if v.BoatInfo == nil {
+			continue
+		}
+		if v.BoatInfo.AvailableSpots != nil {
+			spots := *v.BoatInfo.AvailableSpots
+			net := max(spots-len(v.Guests), 0)
+			g.Offering = append(g.Offering, BoatEntry{Names: v.Names, Spots: spots, NetAvailable: net})
+		}
+		if v.BoatInfo.NeededSpots != nil {
+			g.Needing = append(g.Needing, BoatEntry{Names: v.Names, Spots: *v.BoatInfo.NeededSpots})
+		}
+	}
+	return g
 }
 
 // StatsView adds display-ready fields on top of the raw stats payload.

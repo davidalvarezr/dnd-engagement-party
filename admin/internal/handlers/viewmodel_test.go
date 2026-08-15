@@ -47,7 +47,7 @@ func TestNewInvitationViewStatus(t *testing.T) {
 			},
 			responded: &responded,
 			wantLabel: "1/2 attending",
-			wantKey:   "",
+			wantKey:   "partial",
 		},
 	}
 
@@ -78,6 +78,24 @@ func TestNewInvitationViewNames(t *testing.T) {
 	}
 }
 
+func TestNewInvitationViewActivities(t *testing.T) {
+	view := newInvitationView(client.Invitation{
+		Guests: []client.Guest{{Name: "Alex"}},
+		ActivityParticipants: []client.ActivityParticipation{
+			{Activity: "BBQ_MIDI"},
+			{Activity: "DESCENTE_RHONE"},
+		},
+	})
+
+	want := []ActivityChip{
+		{Key: "BBQ_MIDI", Label: "BBQ (lunch)", Emoji: "🍖"},
+		{Key: "DESCENTE_RHONE", Label: "Rhône descent", Emoji: "🛶"},
+	}
+	if len(view.Activities) != len(want) || view.Activities[0] != want[0] || view.Activities[1] != want[1] {
+		t.Errorf("Activities = %v, want %v", view.Activities, want)
+	}
+}
+
 func TestSingleOptionsOnlyIncludesUnpairedGuests(t *testing.T) {
 	invitations := []client.Invitation{
 		{Guests: []client.Guest{{ID: 1, Name: "Alex"}}},
@@ -88,6 +106,79 @@ func TestSingleOptionsOnlyIncludesUnpairedGuests(t *testing.T) {
 
 	if len(options) != 1 || options[0].GuestID != 1 {
 		t.Fatalf("SingleOptions() = %+v, want only guest 1", options)
+	}
+}
+
+func intPtr(i int) *int { return &i }
+
+func TestActivityGroups(t *testing.T) {
+	views := InvitationViews([]client.Invitation{
+		{
+			Guests: []client.Guest{{Name: "Alex"}, {Name: "Jamie"}},
+			ActivityParticipants: []client.ActivityParticipation{
+				{Activity: "DESCENTE_RHONE"},
+				{Activity: "BBQ_MIDI"},
+			},
+		},
+		{
+			Guests: []client.Guest{{Name: "Sam"}},
+			ActivityParticipants: []client.ActivityParticipation{
+				{Activity: "DESCENTE_RHONE"},
+			},
+		},
+		{
+			Guests: []client.Guest{{Name: "Jo"}},
+		},
+	})
+
+	groups := ActivityGroups(views)
+
+	if len(groups) != 2 {
+		t.Fatalf("ActivityGroups() returned %d groups, want 2", len(groups))
+	}
+
+	rhone := groups[0]
+	if rhone.Activity != "DESCENTE_RHONE" || len(rhone.Invitees) != 2 {
+		t.Fatalf("DESCENTE_RHONE group = %+v, want 2 invitees", rhone)
+	}
+	if rhone.Invitees[0].Names != "Alex & Jamie" || rhone.Invitees[1].Names != "Sam" {
+		t.Errorf("DESCENTE_RHONE names = %q, %q, want %q, %q", rhone.Invitees[0].Names, rhone.Invitees[1].Names, "Alex & Jamie", "Sam")
+	}
+
+	bbq := groups[1]
+	if bbq.Activity != "BBQ_MIDI" || len(bbq.Invitees) != 1 || bbq.Invitees[0].Names != "Alex & Jamie" {
+		t.Fatalf("BBQ_MIDI group = %+v, want [Alex & Jamie]", bbq)
+	}
+}
+
+func TestNewBoatGroups(t *testing.T) {
+	views := InvitationViews([]client.Invitation{
+		{
+			Guests:   []client.Guest{{Name: "Alex"}, {Name: "Jamie"}},
+			BoatInfo: &client.BoatInfo{AvailableSpots: intPtr(6)},
+		},
+		{
+			Guests:   []client.Guest{{Name: "Robin"}},
+			BoatInfo: &client.BoatInfo{AvailableSpots: intPtr(1)},
+		},
+		{
+			Guests:   []client.Guest{{Name: "Sam"}},
+			BoatInfo: &client.BoatInfo{NeededSpots: intPtr(2)},
+		},
+		{
+			Guests: []client.Guest{{Name: "Jo"}},
+		},
+	})
+
+	groups := NewBoatGroups(views)
+
+	if len(groups.Offering) != 2 ||
+		groups.Offering[0] != (BoatEntry{Names: "Alex & Jamie", Spots: 6, NetAvailable: 4}) ||
+		groups.Offering[1] != (BoatEntry{Names: "Robin", Spots: 1, NetAvailable: 0}) {
+		t.Errorf("Offering = %+v, want [{Alex & Jamie 6 4} {Robin 1 0}]", groups.Offering)
+	}
+	if len(groups.Needing) != 1 || groups.Needing[0] != (BoatEntry{Names: "Sam", Spots: 2}) {
+		t.Errorf("Needing = %+v, want [{Sam 2 0}]", groups.Needing)
 	}
 }
 

@@ -31,6 +31,8 @@ type dashboardData struct {
 	Stats       StatsView
 	Invitations []InvitationView
 	Singles     []SingleOption
+	Activities  []ActivityGroup
+	Boat        BoatGroups
 }
 
 func (s *Server) loadDashboard(ctx context.Context) (dashboardData, error) {
@@ -43,10 +45,13 @@ func (s *Server) loadDashboard(ctx context.Context) (dashboardData, error) {
 		return dashboardData{}, err
 	}
 
+	views := InvitationViews(invitations)
 	return dashboardData{
 		Stats:       NewStatsView(*stats),
-		Invitations: InvitationViews(invitations),
+		Invitations: views,
 		Singles:     SingleOptions(invitations),
+		Activities:  ActivityGroups(views),
+		Boat:        NewBoatGroups(views),
 	}, nil
 }
 
