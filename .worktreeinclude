@@ -1,3 +1,7 @@
 .envrc
 .env
-admin/.env
+.env.development.local
+.env.production
+admin/.env.development.local
+admin/.env.production.local
+admin/.
