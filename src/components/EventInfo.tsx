@@ -1,20 +1,9 @@
 import typography from "@/styles/typography.module.css"
-import { BoatSpotsBars } from "./BoatSpotsBars"
 import styles from "./EventInfo.module.css"
 import { BoatDivider } from "./ui/BoatDivider"
 import { WavyDivider } from "./ui/WavyDivider"
 
-export type BoatStats = {
-    availableSpots: number
-    neededSpots: number
-    totalAttendingGuests: number
-}
-
-type Props = {
-    boatStats: BoatStats
-}
-
-export function EventInfo({ boatStats }: Props) {
+export function EventInfo() {
     return (
         <>
             <WavyDivider />
@@ -41,8 +30,6 @@ export function EventInfo({ boatStats }: Props) {
                     </div>
                     <BoatDivider align="right" />
                 </div>
-
-                <BoatSpotsBars {...boatStats} />
 
                 <p className={typography.p}>
                     Si vous nous rejoignez pour le BBQ, on risque d’avoir un peu

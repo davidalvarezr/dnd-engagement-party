@@ -462,6 +462,10 @@ section > h2 {
     font-variant-numeric: tabular-nums;
 }
 
+.boat-net {
+    color: var(--activity-boat);
+}
+
 /* Buttons ------------------------------------------------------------------ */
 
 .btn {

@@ -1,5 +1,4 @@
 import { requireApiKey } from "@/lib/admin-auth"
-import { boatInfoSelect, sumBoatSpots } from "@/lib/boat-stats"
 import { prisma } from "@/lib/prisma"
 
 export async function GET(request: Request) {
@@ -24,8 +23,28 @@ export async function GET(request: Request) {
             by: ["activity"],
             _count: { _all: true },
         }),
-        prisma.boatInfo.findMany({ select: boatInfoSelect }),
+        prisma.boatInfo.findMany({
+            select: {
+                availableSpots: true,
+                neededSpots: true,
+                invitation: { select: { guests: { select: { id: true } } } },
+            },
+        }),
     ])
+
+    // Offering a boat doesn't remove that guest's own need for a ride: a
+    // single offering guest still occupies 1 seat, a couple 2.
+    let boatAvailableSpots = 0
+    let boatNeededSpots = 0
+    for (const info of boatInfos) {
+        if (info.availableSpots != null) {
+            boatAvailableSpots += info.availableSpots
+            boatNeededSpots += info.invitation.guests.length
+        }
+        if (info.neededSpots != null) {
+            boatNeededSpots += info.neededSpots
+        }
+    }
 
     return Response.json({
         invitations: {
@@ -40,6 +59,9 @@ export async function GET(request: Request) {
         activities: Object.fromEntries(
             activityCounts.map((row) => [row.activity, row._count._all]),
         ),
-        boat: sumBoatSpots(boatInfos),
+        boat: {
+            availableSpots: boatAvailableSpots,
+            neededSpots: boatNeededSpots,
+        },
     })
 }

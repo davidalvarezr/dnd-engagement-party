@@ -211,14 +211,19 @@ type BoatGroups struct {
 	Needing  []BoatEntry
 }
 
-// BoatEntry is one household's boat offer or need.
+// BoatEntry is one household's boat offer or need. NetAvailable is only
+// meaningful for offering entries.
 type BoatEntry struct {
-	Names string
-	Spots int
+	Names        string
+	Spots        int
+	NetAvailable int
 }
 
 // NewBoatGroups splits invitation views into "offering" and "needing" boat
-// spot groups.
+// spot groups. An offering household still needs a ride for its own
+// guests — a couple offering 6 spots on their boat only has 4 left over
+// for others — so Offering entries report that net figure alongside the
+// raw spot count.
 func NewBoatGroups(views []InvitationView) BoatGroups {
 	var g BoatGroups
 	for _, v := range views {
@@ -226,7 +231,9 @@ func NewBoatGroups(views []InvitationView) BoatGroups {
 			continue
 		}
 		if v.BoatInfo.AvailableSpots != nil {
-			g.Offering = append(g.Offering, BoatEntry{Names: v.Names, Spots: *v.BoatInfo.AvailableSpots})
+			spots := *v.BoatInfo.AvailableSpots
+			net := max(spots-len(v.Guests), 0)
+			g.Offering = append(g.Offering, BoatEntry{Names: v.Names, Spots: spots, NetAvailable: net})
 		}
 		if v.BoatInfo.NeededSpots != nil {
 			g.Needing = append(g.Needing, BoatEntry{Names: v.Names, Spots: *v.BoatInfo.NeededSpots})

@@ -4,7 +4,7 @@
 {{define "boat-panel-inner"}}<div class="boat-group">
     <h3>Offering boat spot(s)</h3>
     {{if .Offering}}<ul class="name-list">
-        {{range .Offering}}<li>{{.Names}} <span class="boat-count">{{.Spots}} spot(s)</span></li>
+        {{range .Offering}}<li>{{.Names}} <span class="boat-count">{{.Spots}} spot(s) offered <span class="boat-net">({{.NetAvailable}} available)</span></span></li>
         {{end}}
     </ul>
     {{else}}<p class="empty-note">No one is offering a boat spot yet.</p>
