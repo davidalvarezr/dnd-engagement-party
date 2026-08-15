@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
+import { FireBanNotice } from "@/components/FireBanNotice"
 import "./globals.css"
 
 const geistSans = Geist({
@@ -33,7 +34,10 @@ export default function RootLayout({
                     href="https://use.typekit.net/gav5rgl.css"
                 />
             </head>
-            <body>{children}</body>
+            <body>
+                {children}
+                <FireBanNotice />
+            </body>
         </html>
     )
 }
